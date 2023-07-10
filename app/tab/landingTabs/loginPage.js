@@ -1,9 +1,16 @@
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import SessionStorage from 'react-native-session-storage';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Login({navigation}) {
     return (
         <ScrollView contentContainerStyle={{flexGrow:1}}>
             <View style={styles.container}>
+                <View style={{position: 'absolute',width: '100%', alignItems: 'flex-start', top: 30, left: 20}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate('landing')}}>
+                        <Ionicons name='arrow-back' style={{fontSize: 40, color: 'rgba(16, 139, 0, 1)'}} />
+                    </TouchableOpacity>
+                </View>
                 <View style={styles.containerFrm}>
                     <Text style={styles.title}>LOG IN ACCOUNT</Text>
                     <TextInput
@@ -22,7 +29,7 @@ export default function Login({navigation}) {
                 </View>
                 <View style={styles.containerBtn}>
                     <View style={styles.button3}>
-                        <TouchableOpacity activeOpacity={0.5}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5}>
                             <Text style={styles.buttonTxt3}>
                                 <Text style={styles.googleBlue}>G</Text>
                                 <Text style={styles.googleRed}>O</Text>
@@ -34,7 +41,7 @@ export default function Login({navigation}) {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.button1}>
-                        <TouchableOpacity activeOpacity={0.5} onPress={() => { navigation.navigate('Route2'); }}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('appRoute'); }}>
                             <Text style={styles.buttonTxt1}>
                                 Sign in
                             </Text>
@@ -42,7 +49,7 @@ export default function Login({navigation}) {
                     </View>
                     <Text>Don't have an account yet?</Text>
                     <View style={styles.button2}>
-                        <TouchableOpacity activeOpacity={0.5} onPress={() => { navigation.navigate('UserRegistration') }}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('registerUser') }}>
                             <Text style={styles.buttonTxt2}>
                                 Create an Account
                             </Text>

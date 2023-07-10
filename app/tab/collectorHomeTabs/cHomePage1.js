@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import SessionStorage from 'react-native-session-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Calendar } from 'react-native-calendars';
-import { SelectList } from 'react-native-dropdown-select-list';
 
 function HeaderContent() {
     return (
         <>
-            <Text style={{fontSize: 18, fontWeight: 700, color:'rgb(55,55,55)'}}>BANILAD, CEBU CITY</Text>
+            <Text style={{fontSize: 18, fontWeight: 700, color:'rgb(55,55,55)'}}>COLLECTOR REPORT</Text>
             <View style={{flexDirection: 'row', gap: 7, top: 5}}>
                 <View style={{alignItems: 'center'}}>
                     <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>REPORTS TODAY</Text>
@@ -29,9 +27,8 @@ function HeaderContent() {
     );
 }
 
-export default function Dashboard3({navigation}) {
+export default function CDashboard1({navigation}) {
     const [refreshing, setRefreshing] = React.useState(false);
-    const [temp1, setTemp1] = useState();
     
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -41,76 +38,72 @@ export default function Dashboard3({navigation}) {
     }, []);
 
     return (
-        <>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }>
-                <SafeAreaView style={styles.container}>
-                    <View style={styles.header1}>
-                        <View style={styles.header2}>
-                            <Image
-                                source={require('../../../assets/NatureVector.jpg')}
-                                style={{
-                                    resizeMode: 'stretch',
-                                    width: '100%',
-                                    height: '150%',
-                                    opacity: 0.5,
-                                }}
-                            />
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header1}>
+                    <View style={styles.header2}>
+                        <Image
+                            source={require('../../../assets/NatureVector.jpg')}
+                            style={{
+                                resizeMode: 'stretch',
+                                width: '100%',
+                                height: '150%',
+                                opacity: 0.5,
+                            }}
+                        />
+                    </View>
+                </View>
+                <View style={styles.header3}>
+                    {HeaderContent()}
+                </View>
+                <SafeAreaView style={styles.body}>
+                    <View style={styles.navBar1}>
+                        <View style={styles.navButton}>
+                            <View style={styles.navButtonFront2}>
+                                <Ionicons name='bar-chart' style={styles.buttonIcon2} />
+                                <Text style={styles.iconLabel2}>analytics</Text>
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.header3}>
-                        {HeaderContent()}
-                    </View>
-                    <SafeAreaView style={styles.body}>
-                        <View style={styles.navBar1}>
-                            <View style={styles.navButton}>
-                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => {navigation.navigate('dash1');}}>
-                                    <View style={styles.navButtonFront1}>
-                                        <Ionicons name='bar-chart-outline' style={styles.buttonIcon} />
-                                        <Text style={styles.iconLabel}>analytics</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.navButton}>
-                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => {navigation.navigate('dash2');}}>
-                                    <View style={styles.navButtonFront1}>
-                                        <Ionicons name='newspaper-outline' style={styles.buttonIcon} />
-                                        <Text style={styles.iconLabel}>feed</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.uploadButton}>
-                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => {navigation.navigate('f1');}}>
-                                    <View style={styles.uploadButtonFront}>
-                                        <Ionicons name='add-circle-outline' style={styles.uploadButtonIcon} />
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.navButton}>
-                                <View style={styles.navButtonFront2}>
-                                    <Ionicons name='calendar' style={styles.buttonIcon2} />
-                                    <Text style={styles.iconLabel2}>schedule</Text>
+                        <View style={styles.navButton}>
+                            <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('dash2'); }}>
+                                <View style={styles.navButtonFront1}>
+                                    <Ionicons name='newspaper-outline' style={styles.buttonIcon} />
+                                    <Text style={styles.iconLabel}>feed</Text>
                                 </View>
-                            </View>
-                            <View style={styles.navButton}>
-                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5}>
-                                    <View style={styles.navButtonFront1}>
-                                        <Ionicons name='image' style={styles.buttonIcon} />
-                                        <Text style={styles.iconLabel}>unknown</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
+                            </TouchableOpacity>
                         </View>
-                        <View style={styles.containerPageName}>
-                            <Text style={styles.pageName}>SCHEDULE</Text>
+                        <View style={styles.uploadButton}>
+                            <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5}>
+                                <View style={styles.uploadButtonFront}>
+                                    <Ionicons name='add-circle-outline' style={styles.uploadButtonIcon} />
+                                </View>
+                            </TouchableOpacity>
                         </View>
-                        <Calendar style={{top: 15, marginBottom: 15}} />
-                    </SafeAreaView>
+                        <View style={styles.navButton}>
+                            <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => {navigation.navigate('dash3');}}>
+                                <View style={styles.navButtonFront1}>
+                                    <Ionicons name='calendar-outline' style={styles.buttonIcon} />
+                                    <Text style={styles.iconLabel}>schedule</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.navButton}>
+                            <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => {navigation.navigate('dash4')}}>
+                                <View style={styles.navButtonFront1}>
+                                    <Ionicons name='notifications-outline' style={styles.buttonIcon} />
+                                    <Text style={styles.iconLabel}>alerts</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={styles.containerPageName}>
+                        <Text style={styles.pageName}>ANALYTICS</Text>
+                    </View>
                 </SafeAreaView>
-            </ScrollView>
-            {temp1}
-        </>
+            </SafeAreaView>
+        </ScrollView>
     );
 }
 

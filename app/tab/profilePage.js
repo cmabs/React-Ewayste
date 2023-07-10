@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgb(246, 242, 239)',
         justifyContent: 'flex-start',
         alignItems: 'center',
+        paddingBottom: 60,
     },
     containerBtn: {
         top: 210,

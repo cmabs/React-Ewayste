@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import Layout3 from './tab/route3';
+import Layout5 from './tab/route5';
 import Map from './tab/mapPage';
 import FriendsList from './tab/friendsPage';
 import Message from './tab/messagePage';
@@ -11,7 +11,7 @@ import Profile from './tab/profilePage';
 
 const Tab = createBottomTabNavigator();
 
-export default function Layout2() {
+export default function Layout6() {
     return (
         <Tab.Navigator
             initialRouteName='home'
@@ -55,7 +55,7 @@ export default function Layout2() {
                 tabBarActiveBackgroundColor: 'rgba(126, 185, 73, 1)',
             })}
         >
-            <Tab.Screen name='home' component={Layout3} options={{headerShown: false}} />
+            <Tab.Screen name='home' component={Layout5} options={{headerShown: false}} />
             <Tab.Screen name='map' component={Map} options={{headerShown: false}} />
             <Tab.Screen name='friends' component={FriendsList} options={{headerShown: false}} />
             <Tab.Screen name='message' component={Message} options={{ headerShown: false }} />

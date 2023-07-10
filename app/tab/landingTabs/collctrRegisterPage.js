@@ -1,14 +1,21 @@
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { useState } from "react";
-import CheckBox from "../components/CheckBox";
+import CheckBox from '../../../components/CheckBox';
+import SessionStorage from 'react-native-session-storage';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function Registration1({navigation}) {
+export default function Registration2({ navigation }) {
     const [agree, setAgree] = useState(false);
     return (
         <ScrollView contentContainerStyle={{flexGrow:1}}>
             <View style={styles.container}>
+                <View style={{position: 'absolute',width: '100%', alignItems: 'flex-start', top: 30, left: 20}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate('landing')}}>
+                        <Ionicons name='arrow-back' style={{fontSize: 40, color: 'rgba(16, 139, 0, 1)'}} />
+                    </TouchableOpacity>
+                </View>
                 <View style={styles.containerFrm}>
-                    <Text style={styles.title}>CREATE ACCOUNT</Text>
+                    <Text style={styles.title}>CREATE COLLECTOR ACCOUNT</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="First Name"
@@ -45,14 +52,14 @@ export default function Registration1({navigation}) {
                 </View>
                 <View style={styles.containerBtn}>
                     <View style={styles.button1}>
-                        <TouchableOpacity activeOpacity={0.5} onPress={() => { navigation.navigate('Route2'); }}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('collectorAppRoute'); }}>
                             <Text style={styles.buttonTxt1}>
                                 Create Account
                             </Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.button2}>
-                        <TouchableOpacity activeOpacity={0.5}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5}>
                             <Text style={styles.buttonTxt2}>
                                 Sign in with Google
                             </Text>
@@ -66,7 +73,6 @@ export default function Registration1({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
-        height: 550,
         flex: 1,
         flexDirection: 'column',
         backgroundColor: 'rgb(246, 242, 239)',
