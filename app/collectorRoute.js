@@ -3,15 +3,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import Layout3 from './tab/route3';
+import NewsfeedCol from './tab/homePageC';
+import ReportCol from './tab/reportPageC';
 import Map from './tab/mapPage';
-import FriendsList from './tab/friendsPage';
+import ScheduleCol from './tab/schedPageC';
 import Message from './tab/messagePage';
-import Profile from './tab/profilePage';
+import NotificationsCol from './tab/notifPageC';
 
 const Tab = createBottomTabNavigator();
 
-export default function Layout2() {
+export default function CollectorLayout() {
     return (
         <Tab.Navigator
             initialRouteName='home'
@@ -21,14 +22,21 @@ export default function Layout2() {
                     let rn = route.name;
                     if (rn === 'home') {
                         iconName = focused ? 'home' : 'home-outline'
-                    } else if (rn === 'map') {
+                    }
+                    if (rn === 'report') {
+                        iconName = focused ? 'file-tray-stacked' : 'file-tray-stacked-outline'
+                    }
+                    if (rn === 'map') {
                         iconName = focused ? 'map' : 'map-outline'
-                    } else if (rn === 'message') {
+                    }
+                    if (rn === 'schedule') {
+                        iconName = focused ? 'calendar' : 'calendar-outline'
+                    }
+                    if (rn === 'notification') {
+                        iconName = focused ? 'notifications' : 'notifications-outline'
+                    }
+                    if (rn === 'message') {
                         iconName = focused ? 'chatbox-ellipses' : 'chatbox-ellipses-outline'
-                    } else if (rn === 'profile') {
-                        iconName = focused ? 'person' : 'person-outline'
-                    } else if (rn === 'friends') {
-                        iconName = focused ? 'people' : 'people-outline'
                     }
 
                     return <Ionicons name={iconName} size={size} color={color} />
@@ -55,11 +63,12 @@ export default function Layout2() {
                 tabBarActiveBackgroundColor: 'rgba(126, 185, 73, 1)',
             })}
         >
-            <Tab.Screen name='home' component={Layout3} options={{headerShown: false}} />
-            <Tab.Screen name='map' component={Map} options={{headerShown: false}} />
-            <Tab.Screen name='friends' component={FriendsList} options={{headerShown: false}} />
+            <Tab.Screen name='home' component={NewsfeedCol} options={{headerShown: false}} />
+            <Tab.Screen name='report' component={ReportCol} options={{ headerShown: false }} />
+            <Tab.Screen name='map' component={Map} options={{ headerShown: false }} />
+            <Tab.Screen name='schedule' component={ScheduleCol} options={{ headerShown: false }} />
             <Tab.Screen name='message' component={Message} options={{ headerShown: false }} />
-            <Tab.Screen name='profile' component={Profile} options={{headerShown:false}} />
+            <Tab.Screen name='notification' component={NotificationsCol} options={{ headerShown: false, tabBarItemStyle: { display: 'none' }, tabBarStyle: { display: 'none' } }} />
         </Tab.Navigator>
     );
 }

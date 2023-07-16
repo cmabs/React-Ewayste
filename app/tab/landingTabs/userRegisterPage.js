@@ -52,7 +52,7 @@ export default function Registration1({ navigation }) {
                 </View>
                 <View style={styles.containerBtn}>
                     <View style={styles.button1}>
-                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('appRoute'); }}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('userRoute'); }}>
                             <Text style={styles.buttonTxt1}>
                                 Create Account
                             </Text>
