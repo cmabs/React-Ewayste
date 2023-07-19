@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LandingLayout from "./app/landingRoute";
 import UserLayout from "./app/userRoute";
 import CollectorLayout from "./app/collectorRoute";
+import AuthorityLayout from "./app/authorityRoute";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,6 +14,7 @@ export default function Layout1() {
                 <Stack.Screen name='landingRoute' component={LandingLayout} options={{ headerShown: false }} />
                 <Stack.Screen name='userRoute' component={UserLayout} options={{ headerShown: false }} />
                 <Stack.Screen name='collectorRoute' component={CollectorLayout} options={{ headerShown: false }} />
+                <Stack.Screen name='authorityRoute' component={AuthorityLayout} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     );

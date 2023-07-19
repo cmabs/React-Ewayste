@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl } from "react-native";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import SessionStorage from 'react-native-session-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function ReportCol({ navigation }) {
     const [refreshing, setRefreshing] = React.useState(false);
+    const [openSideBar, setOpenSideBar] = React.useState();
     
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -12,6 +13,48 @@ export default function ReportCol({ navigation }) {
             setRefreshing(false);
         }, 1000);
     }, []);
+
+    function SideBar(navigation) {
+        return (
+            <>
+                <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'flex-start', backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 99 }}>
+                    <View style={{ width: 280, height: '100%', backgroundColor: '#ffffff', paddingBottom: 60, alignItems: 'center' }}>
+                        <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar()}}>
+                            <Ionicons name='arrow-back' style={{ fontSize: 40, color: 'rgb(81,175,91)' }} />
+                        </TouchableOpacity>
+                        <View style={{ width: '100%', alignItems: 'center', gap: 10, marginTop: 60 }}>
+                            <Image
+                                source={require('../../assets/E-Wayste-logo.png')}
+                                style={{width: 180, height: 161, marginBottom: 10}}
+                            />
+                            <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
+                                <TouchableOpacity activeOpacity={0.5} onPress={() => { setOpenSideBar(); navigation.navigate('profile') }}>
+                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                        <Text>User Profile</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
+                                <TouchableOpacity activeOpacity={0.5}>
+                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                        <Text>Settings</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{position: 'absolute', width: '95%', height: 40, bottom: 80, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
+                            <TouchableOpacity activeOpacity={0.5} onPress={() => { setOpenSideBar(); navigation.navigate('login') }}>
+                                <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                    <Text>Logout</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <TouchableOpacity style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0)', zIndex: -1}} onPress={() => {setOpenSideBar()}} />
+                </View>
+            </>
+        );
+    }
 
     function BodyContent() {
         let temp = [];
@@ -83,15 +126,20 @@ export default function ReportCol({ navigation }) {
 
     return (
         <>
-            <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }}>
+            <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideBar(navigation))}}>
                 <Ionicons name='menu' style={{ fontSize: 40, color: 'rgb(81,175,91)' }} />
             </TouchableOpacity>
             <TouchableOpacity style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }} onPress={() => {navigation.navigate('notification')}}>
                 <Ionicons name='notifications' style={{ fontSize: 35, color: 'rgb(81,175,91)' }} />
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99 }}>
-                <Ionicons name='add-circle' style={{ fontSize: 70, color: 'rgb(81,175,91)' }} />
-            </TouchableOpacity>
+            <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgb(81,175,91)', overflow: 'hidden' }}>
+                <TouchableOpacity activeOpacity={0.5}>
+                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                        <Ionicons name='add-circle' style={{ fontSize: 60, color: 'rgb(81,175,91)', top: -3, right: -0.9 }} />
+                    </View>
+                </TouchableOpacity>
+            </View>
+            {openSideBar}
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
@@ -104,7 +152,7 @@ export default function ReportCol({ navigation }) {
                     </Text>
                     <View style={{ marginTop: 50 }}>
                         <Text style={{fontSize: 20, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 5}}>Banilad, Cebu City</Text>
-                        <View style={{width: 350, backgroundColor: 'rgb(231, 247, 233)', borderRadius: 10, overflow: 'hidden', marginBottom: 20}}>
+                        <View style={{width: 330, backgroundColor: 'rgb(231, 247, 233)', borderRadius: 10, overflow: 'hidden', marginBottom: 20}}>
                             <View style={{ flexDirection: 'row', width: '100%' }}>
                                 <Text style={{ left: 10, marginTop: 15, fontWeight: 700 }}>REPORTS TODAY</Text>
                                 <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 15, marginTop: 15 }}>
@@ -139,7 +187,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     contentButton: {
-        width: 350,
+        width: 330,
         backgroundColor: 'rgb(230, 230, 230)',
         borderRadius: 5,
         overflow: 'hidden',

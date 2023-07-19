@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Message({navigation}) {
     const [refreshing, setRefreshing] = React.useState(false);
+    const [openSideBar, setOpenSideBar] = React.useState();
     
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -12,6 +13,48 @@ export default function Message({navigation}) {
             setRefreshing(false);
         }, 1000);
     }, []);
+
+    function SideBar(navigation) {
+        return (
+            <>
+                <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'flex-start', backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 99 }}>
+                    <View style={{ width: 280, height: '100%', backgroundColor: '#ffffff', paddingBottom: 60, alignItems: 'center' }}>
+                        <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar()}}>
+                            <Ionicons name='arrow-back' style={{ fontSize: 40, color: 'rgb(81,175,91)' }} />
+                        </TouchableOpacity>
+                        <View style={{ width: '100%', alignItems: 'center', gap: 10, marginTop: 60 }}>
+                            <Image
+                                source={require('../../assets/E-Wayste-logo.png')}
+                                style={{width: 180, height: 161, marginBottom: 10}}
+                            />
+                            <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
+                                <TouchableOpacity activeOpacity={0.5} onPress={() => { setOpenSideBar(); navigation.navigate('profile') }}>
+                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                        <Text>User Profile</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
+                                <TouchableOpacity activeOpacity={0.5}>
+                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                        <Text>Settings</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{position: 'absolute', width: '95%', height: 40, bottom: 80, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
+                            <TouchableOpacity activeOpacity={0.5} onPress={() => { setOpenSideBar(); navigation.navigate('login') }}>
+                                <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                    <Text>Logout</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <TouchableOpacity style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0)', zIndex: -1}} onPress={() => {setOpenSideBar()}} />
+                </View>
+            </>
+        );
+    }
 
     function BodyContent() {
         let temp = [];
@@ -60,7 +103,7 @@ export default function Message({navigation}) {
             <View style={styles.containerHeader}>
                 <View style={{ flexDirection: 'row'}}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 15 }}>
-                        <TouchableOpacity activeOpacity={0.5}>
+                        <TouchableOpacity activeOpacity={0.5}  onPress={() => {setOpenSideBar(SideBar(navigation))}}>
                             <Ionicons name='menu' style={{fontSize: 40, color: '#ffffff', top: 2}} />
                         </TouchableOpacity>
                         <Text style={{fontSize: 20, fontWeight: 600, color: '#ffffff', top: 1}}>Message</Text>
@@ -87,7 +130,7 @@ export default function Message({navigation}) {
             </View>
             <View style={{
                 position: 'absolute',
-                zIndex: 99,
+                zIndex: 98,
                 bottom: 80,
                 right: 25,
                 height: 60,
@@ -102,6 +145,7 @@ export default function Message({navigation}) {
                     </View>
                 </TouchableOpacity>
             </View>
+            {openSideBar}
         </>
     );
 }

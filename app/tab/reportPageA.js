@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import SessionStorage from 'react-native-session-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function Report({ navigation }) {
+export default function ReportAut({navigation}) {
     const [refreshing, setRefreshing] = React.useState(false);
     const [openSideBar, setOpenSideBar] = React.useState();
     
@@ -93,7 +93,7 @@ export default function Report({ navigation }) {
         </ul>
 
         return (
-            <View>
+            <View style={{gap: 10}}>
                 {temp}
             </View>
         );
@@ -124,11 +124,32 @@ export default function Report({ navigation }) {
         );
     }
 
+    function HeaderContent() {
+        return (
+            <>
+                <Text style={{fontSize: 18, fontWeight: 700, color:'rgb(55,55,55)'}}>BANILAD, CEBU CITY</Text>
+                <View style={{flexDirection: 'row', gap: 7, top: 5}}>
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>REPORTS TODAY</Text>
+                        <View style={styles.headerCntr}>
+                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>12</Text>
+                            <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
+                        </View>
+                    </View>
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>TOTAL REPORT</Text>
+                        <View style={styles.headerCntr}>
+                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>38</Text>
+                            <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
+                        </View>
+                    </View>
+                </View>
+            </>
+        );
+    }
+
     return (
         <>
-            <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideBar(navigation))}}>
-                <Ionicons name='menu' style={{ fontSize: 40, color: 'rgb(81,175,91)' }} />
-            </TouchableOpacity>
             <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgb(81,175,91)', overflow: 'hidden' }}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
@@ -136,36 +157,56 @@ export default function Report({ navigation }) {
                     </View>
                 </TouchableOpacity>
             </View>
-            {openSideBar}
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
                 <SafeAreaView style={styles.container}>
-                    <View style={{width: '100%', flexDirection: 'row', justifyContent: 'center', paddingTop: 14}}>
-                        <Text style={{ fontSize: 25, fontWeight: 900, color: 'rgb(81,175,91)' }}>REPORTS</Text>
-                    </View>
-                    <Text style={{position: 'absolute', right: 20, top: 80}}>
-                        <Text style={{fontWeight: 600}}>Wednesday</Text>, April 19, 2023 <Ionicons name='caret-down-circle-outline' style={{fontSize: 20}} />
-                    </Text>
-                    <View style={{ marginTop: 50 }}>
-                        <Text style={{fontSize: 20, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 5}}>Banilad, Cebu City</Text>
-                        <View style={{width: 330, backgroundColor: 'rgb(231, 247, 233)', borderRadius: 10, overflow: 'hidden', marginBottom: 20}}>
-                            <View style={{ flexDirection: 'row', width: '100%' }}>
-                                <Text style={{ left: 10, marginTop: 15, fontWeight: 700 }}>REPORTS TODAY</Text>
-                                <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 15, marginTop: 15 }}>
-                                    <Text style={{textDecorationLine: 'underline'}}>
-                                        View all
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                            <ScrollView horizontal={true}>
-                                {ViewAllContent()}
-                            </ScrollView>
+                    <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideBar(navigation))}}>
+                        <Ionicons name='menu' style={{ fontSize: 40, color: '#ffffff' }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }} onPress={() => {navigation.navigate('notification')}}>
+                        <Ionicons name='notifications' style={{ fontSize: 35, color: '#ffffff' }} />
+                    </TouchableOpacity>
+                    <View style={styles.header1}>
+                        <View style={styles.header2}>
+                            <Image
+                                source={require('../../assets/NatureVector.jpg')}
+                                style={{
+                                    resizeMode: 'stretch',
+                                    width: '100%',
+                                    height: '150%',
+                                    opacity: 0.5,
+                                }}
+                            />
                         </View>
-                        {BodyContent ()}
                     </View>
+                    <View style={styles.header3}>
+                        {HeaderContent()}
+                    </View>
+                    <SafeAreaView style={styles.body}>
+                        <View style={{alignItems: 'center'}}>
+                            <Text style={{fontSize: 23, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 10}}>REPORTS</Text>
+                        </View>
+                        <View>
+                            <View style={{width: 315, backgroundColor: '#ffffff', borderRadius: 10, overflow: 'hidden', marginBottom: 20}}>
+                                <View style={{ flexDirection: 'row', width: '100%' }}>
+                                    <Text style={{ left: 10, marginTop: 15, fontWeight: 700 }}>REPORTS TODAY</Text>
+                                    <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 15, marginTop: 15 }}>
+                                        <Text style={{textDecorationLine: 'underline'}}>
+                                            View all
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <ScrollView horizontal={true}>
+                                    {ViewAllContent()}
+                                </ScrollView>
+                            </View>
+                            {BodyContent ()}
+                        </View>
+                    </SafeAreaView>
                 </SafeAreaView>
             </ScrollView>
+            {openSideBar}
         </>
     );
 }
@@ -174,21 +215,73 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'rgb(246, 242, 239)',
         justifyContent: 'flex-start',
         alignItems: 'center',
         paddingBottom: 60,
+    },
+    header1: {
+        width: '100%',
+        height: 252,
+        backgroundColor: 'rgb(220, 130, 47)',
+        zIndex: -50,
+    },
+    header2: {
+        width: '100%',
+        height: '90%',
+        backgroundColor: 'rgb(134, 202, 81)',
+        overflow: 'hidden',
+        alignItems: 'center',
+    },
+    header3: {
+        position: 'absolute',
+        width: 310,
+        height: 210,
+        top: 75,
+        backgroundColor: '#ffffff',
+        borderRadius: 15,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 10,
+        },
+        shadowOpacity: 0.30,
+        shadowRadius: 10,
+        elevation: 6,
+        zIndex: 50,
+        alignItems: 'center',
         paddingTop: 20,
     },
-    contentGap: {
-        marginBottom: 10,
+    body: {
+        position: 'relative',
+        width: 330,
+        backgroundColor: 'rgb(228,237,229)',
+        paddingTop: 50,
+        paddingBottom: 10,
+        alignItems: 'center',
+    },
+    headerCntr: {
+        width: 137,
+        height: 90,
+        backgroundColor: 'rgb(255,248,172)',
+        overflow: 'hidden',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+        elevation: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     contentButton: {
-        width: 330,
+        width: 315,
         backgroundColor: 'rgb(230, 230, 230)',
         borderRadius: 5,
         overflow: 'hidden',
-        shadowColor: "rgb(0,0,0)",
+        shadowColor: "#000",
         shadowOffset: {
             width: 3,
             height: 3,
@@ -199,7 +292,7 @@ const styles = StyleSheet.create({
     },
     contentButtonFront: {
         width: '100%',
-        backgroundColor: 'rgb(231, 247, 233)',
+        backgroundColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center',
         color: 'rgba(113, 112, 108, 1)',
@@ -217,4 +310,4 @@ const styles = StyleSheet.create({
         fontSize: 25,
         color: 'rgba(113, 112, 108, 1)',
     },
-});
+})

@@ -3,16 +3,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import Newsfeed from './tab/homePage';
-import Report from './tab/reportPage';
+import NewsfeedAut from './tab/homePageA';
+import ReportAut from './tab/reportPageA';
 import Map from './tab/mapPage';
-import Schedule from './tab/schedPage';
-import Notifications from './tab/notifPage';
+import ScheduleAut from './tab/schedPageA';
+import Message from './tab/messagePage';
+import NotificationsCol from './tab/notifPageC';
 import Profile from './tab/profilePage';
 
 const Tab = createBottomTabNavigator();
 
-export default function UserLayout() {
+export default function AuthorityLayout() {
     return (
         <Tab.Navigator
             initialRouteName='home'
@@ -34,6 +35,9 @@ export default function UserLayout() {
                     }
                     if (rn === 'notification') {
                         iconName = focused ? 'notifications' : 'notifications-outline'
+                    }
+                    if (rn === 'message') {
+                        iconName = focused ? 'chatbox-ellipses' : 'chatbox-ellipses-outline'
                     }
 
                     return <Ionicons name={iconName} size={size} color={color} />
@@ -60,11 +64,12 @@ export default function UserLayout() {
                 tabBarActiveBackgroundColor: 'rgba(126, 185, 73, 1)',
             })}
         >
-            <Tab.Screen name='home' component={Newsfeed} options={{headerShown: false}} />
-            <Tab.Screen name='report' component={Report} options={{ headerShown: false }} />
+            <Tab.Screen name='home' component={NewsfeedAut} options={{headerShown: false}} />
+            <Tab.Screen name='report' component={ReportAut} options={{ headerShown: false }} />
             <Tab.Screen name='map' component={Map} options={{ headerShown: false }} />
-            <Tab.Screen name='schedule' component={Schedule} options={{ headerShown: false }} />
-            <Tab.Screen name='notification' component={Notifications} options={{ headerShown: false }} />
+            <Tab.Screen name='schedule' component={ScheduleAut} options={{ headerShown: false }} />
+            <Tab.Screen name='message' component={Message} options={{ headerShown: false }} />
+            <Tab.Screen name='notification' component={NotificationsCol} options={{ headerShown: false, tabBarItemStyle: { display: 'none' }, tabBarStyle: { display: 'none' } }} />
             <Tab.Screen name='profile' component={Profile} options={{ headerShown: false, tabBarItemStyle: { display: 'none' }, tabBarStyle: { display: 'none' }  }} />
         </Tab.Navigator>
     );

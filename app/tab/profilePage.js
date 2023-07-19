@@ -1,59 +1,64 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl } from "react-native";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import SessionStorage from 'react-native-session-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Profile({navigation}) {
     return (
-        <ScrollView contentContainerStyle={{flexGrow:1}}>
-            <SafeAreaView style={styles.container}>
-                <Text style={styles.title}>PROFILE</Text>
-                <View style={styles.containerPfp}>
-                    <Ionicons name='person-outline' style={styles.placeholderPfp} />
-                </View>
-                <Text style={styles.usernamePfp}>Username</Text>
-                <TouchableOpacity style={styles.editProfile}>
-                    <Text style={{color:'rgb(81,175,91)'}}>Edit Profile</Text>
-                    <Ionicons name='create-outline' style={{color:'rgb(81,175,91)'}} />
-                </TouchableOpacity>
-                <View style={styles.containerFrm}>
-                    <View style={styles.containerInfoDisplay}>
-                        <Text style={styles.containerInfoTxt}>Username</Text>
-                        <Text style={styles.containerInfoTxt}>Name</Text>
-                        <Text style={styles.containerInfoTxt}>Province</Text>
-                        <Text style={styles.containerInfoTxt}>Municipality</Text>
-                        <Text style={styles.containerInfoTxt}>Phone Number</Text>
+        <>
+            <TouchableOpacity style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }}  onPress={() => {navigation.navigate('home')}}>
+                <Ionicons name='home' style={{ fontSize: 35, color: 'rgb(81,175,91)' }} />
+            </TouchableOpacity>
+            <ScrollView contentContainerStyle={{flexGrow:1}}>
+                <SafeAreaView style={styles.container}>
+                    <Text style={styles.title}>PROFILE</Text>
+                    <View style={styles.containerPfp}>
+                        <Ionicons name='person-outline' style={styles.placeholderPfp} />
                     </View>
-                    <View style={styles.containerInfoDisplay}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Username"
-                            editable={false}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Name"
-                            editable={false}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Province"
-                            editable={false}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Municipality"
-                            editable={false}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Phone Number"
-                            editable={false}
-                        />
+                    <Text style={styles.usernamePfp}>Username</Text>
+                    <TouchableOpacity style={styles.editProfile}>
+                        <Text style={{color:'rgb(81,175,91)'}}>Edit Profile</Text>
+                        <Ionicons name='create-outline' style={{color:'rgb(81,175,91)'}} />
+                    </TouchableOpacity>
+                    <View style={styles.containerFrm}>
+                        <View style={styles.containerInfoDisplay}>
+                            <Text style={styles.containerInfoTxt}>Username</Text>
+                            <Text style={styles.containerInfoTxt}>Name</Text>
+                            <Text style={styles.containerInfoTxt}>Province</Text>
+                            <Text style={styles.containerInfoTxt}>Municipality</Text>
+                            <Text style={styles.containerInfoTxt}>Phone Number</Text>
+                        </View>
+                        <View style={styles.containerInfoDisplay}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Username"
+                                editable={false}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Name"
+                                editable={false}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Province"
+                                editable={false}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Municipality"
+                                editable={false}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Phone Number"
+                                editable={false}
+                            />
+                        </View>
                     </View>
-                </View>
-            </SafeAreaView>
-        </ScrollView>
+                </SafeAreaView>
+            </ScrollView>
+        </>
     );
 }
 

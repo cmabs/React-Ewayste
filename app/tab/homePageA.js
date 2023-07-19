@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import SessionStorage from 'react-native-session-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function Newsfeed({ navigation }) {
+export default function NewsfeedAut({navigation}) {
     const [refreshing, setRefreshing] = React.useState(false);
     const [openSideBar, setOpenSideBar] = React.useState();
     
@@ -93,30 +93,69 @@ export default function Newsfeed({ navigation }) {
         </ul>
 
         return (
-            <View>
+            <View style={{gap: 10}}>
                 {temp}
             </View>
         );
     }
 
+    function HeaderContent() {
+        return (
+            <>
+                <Text style={{fontSize: 18, fontWeight: 700, color:'rgb(55,55,55)'}}>BANILAD, CEBU CITY</Text>
+                <View style={{flexDirection: 'row', gap: 7, top: 5}}>
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>REPORTS TODAY</Text>
+                        <View style={styles.headerCntr}>
+                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>12</Text>
+                            <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
+                        </View>
+                    </View>
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>TOTAL REPORT</Text>
+                        <View style={styles.headerCntr}>
+                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>38</Text>
+                            <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
+                        </View>
+                    </View>
+                </View>
+            </>
+        );
+    }
+
     return (
         <>
-            <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideBar(navigation))}}>
-                <Ionicons name='menu' style={{ fontSize: 40, color: 'rgb(81,175,91)' }} />
-            </TouchableOpacity>
-            {/*<TouchableOpacity style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }}>
-                <Ionicons name='notifications' style={{ fontSize: 35, color: 'rgb(81,175,91)' }} />
-            </TouchableOpacity>*/}
-            {openSideBar}
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
                 <SafeAreaView style={styles.container}>
-                    <View style={{width: '100%', flexDirection: 'row', justifyContent: 'center', paddingTop: 14}}>
-                        <Text style={{ fontSize: 25, fontWeight: 900, color: 'rgb(81,175,91)' }}>NEWSFEED</Text>
+                    <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideBar(navigation))}}>
+                        <Ionicons name='menu' style={{ fontSize: 40, color: '#ffffff' }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }} onPress={() => {navigation.navigate('notification')}}>
+                        <Ionicons name='notifications' style={{ fontSize: 35, color: '#ffffff' }} />
+                    </TouchableOpacity>
+                    <View style={styles.header1}>
+                        <View style={styles.header2}>
+                            <Image
+                                source={require('../../assets/NatureVector.jpg')}
+                                style={{
+                                    resizeMode: 'stretch',
+                                    width: '100%',
+                                    height: '150%',
+                                    opacity: 0.5,
+                                }}
+                            />
+                        </View>
                     </View>
-                    <View style={{ marginTop: 35 }}>
-                        <View style={{width: 330, backgroundColor: 'rgb(230, 230, 230)', borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: 'rgb(16, 139, 0)', marginBottom: 20}}>
+                    <View style={styles.header3}>
+                        {HeaderContent()}
+                    </View>
+                    <SafeAreaView style={styles.body}>
+                        <View style={{alignItems: 'center'}}>
+                            <Text style={{fontSize: 23, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 10}}>NEWS FEED</Text>
+                        </View>
+                        <View style={{width: 315, backgroundColor: 'rgb(230, 230, 230)', borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: 'rgb(16, 139, 0)', marginBottom: 20}}>
                             <TouchableOpacity activeOpacity={0.5}>
                                 <View style={{backgroundColor: '#ffffff', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 15, alignItems: 'center'}}>
                                     <View style={[styles.containerPfp, {width: 45, height: 45}]}>
@@ -135,33 +174,34 @@ export default function Newsfeed({ navigation }) {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        <View style={{paddingHorizontal: 10, flexDirection: 'row', gap: 10, marginBottom: 15}}>
+                        <View style={{width: '100%', paddingHorizontal: 10, flexDirection: 'row', gap: 10, marginBottom: 15}}>
                             <View style={{width: 70, height: 35, backgroundColor: 'rgb(179, 229, 94)', borderRadius: 20, overflow: 'hidden', shadowColor: "#000", shadowOffset: {width: 0, height: 3,}, shadowOpacity: 0.27, elevation: 3}}>
                                 <TouchableOpacity activeOpacity={0.5}>
-                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
                                         <Text style={{fontWeight: 700, fontSize: 15, color: 'rgb(113, 112, 108)'}}>All</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
                             <View style={{width: 90, height: 35, backgroundColor: 'rgb(179, 229, 94)', borderRadius: 20, overflow: 'hidden', shadowColor: "#000", shadowOffset: {width: 0, height: 3,}, shadowOpacity: 0.27, elevation: 3}}>
                                 <TouchableOpacity activeOpacity={0.5}>
-                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
                                         <Text style={{fontWeight: 700, fontSize: 15, color: 'rgb(113, 112, 108)'}}>Reports</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
                             <View style={{width: 90, height: 35, backgroundColor: 'rgb(179, 229, 94)', borderRadius: 20, overflow: 'hidden', shadowColor: "#000", shadowOffset: {width: 0, height: 3,}, shadowOpacity: 0.27, elevation: 3}}>
                                 <TouchableOpacity activeOpacity={0.5}>
-                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
                                         <Text style={{fontWeight: 700, fontSize: 15, color: 'rgb(113, 112, 108)'}}>Events</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        {BodyContent ()}
-                    </View>
+                        {BodyContent()}
+                    </SafeAreaView>
                 </SafeAreaView>
             </ScrollView>
+            {openSideBar}
         </>
     );
 }
@@ -170,17 +210,69 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'rgb(246, 242, 239)',
         justifyContent: 'flex-start',
         alignItems: 'center',
         paddingBottom: 60,
+    },
+    header1: {
+        width: '100%',
+        height: 252,
+        backgroundColor: 'rgb(220, 130, 47)',
+        zIndex: -50,
+    },
+    header2: {
+        width: '100%',
+        height: '90%',
+        backgroundColor: 'rgb(134, 202, 81)',
+        overflow: 'hidden',
+        alignItems: 'center',
+    },
+    header3: {
+        position: 'absolute',
+        width: 310,
+        height: 210,
+        top: 75,
+        backgroundColor: '#ffffff',
+        borderRadius: 15,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 10,
+        },
+        shadowOpacity: 0.30,
+        shadowRadius: 10,
+        elevation: 6,
+        zIndex: 50,
+        alignItems: 'center',
         paddingTop: 20,
     },
-    contentGap: {
-        marginBottom: 10,
+    body: {
+        position: 'relative',
+        width: 330,
+        backgroundColor: 'rgb(228,237,229)',
+        paddingTop: 50,
+        paddingBottom: 10,
+        alignItems: 'center',
+    },
+    headerCntr: {
+        width: 137,
+        height: 90,
+        backgroundColor: 'rgb(255,248,172)',
+        overflow: 'hidden',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+        elevation: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     contentButton: {
-        width: 330,
+        width: 315,
         backgroundColor: 'rgb(230, 230, 230)',
         borderRadius: 5,
         overflow: 'hidden',
@@ -195,7 +287,7 @@ const styles = StyleSheet.create({
     },
     contentButtonFront: {
         width: '100%',
-        backgroundColor: 'rgb(247, 245, 243)',
+        backgroundColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center',
         color: 'rgba(113, 112, 108, 1)',
@@ -213,4 +305,4 @@ const styles = StyleSheet.create({
         fontSize: 25,
         color: 'rgba(113, 112, 108, 1)',
     },
-});
+})

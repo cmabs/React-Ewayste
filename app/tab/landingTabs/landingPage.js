@@ -23,7 +23,7 @@ export default function Landing({ navigation }) {
                             </TouchableOpacity>
                         </View>
                         <View style={{width: 280, height: 200, backgroundColor: 'rgba(203, 203, 203, 1)', borderRadius: 10, overflow: 'hidden',}}>
-                            <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5}>
+                            <TouchableOpacity style={{ width: '100%', height: '100%' }} activeOpacity={0.5} onPress={() => { setTemp(), navigation.navigate('registerAuthority'); }}>
                                 <View style={{ width: '100%', height: '100%', backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center'}}>
                                     <Text>Authorities</Text>
                                 </View>
