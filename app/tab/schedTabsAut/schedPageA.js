@@ -7,6 +7,7 @@ import { Calendar } from 'react-native-calendars';
 export default function ScheduleAut({navigation}) {
     const [refreshing, setRefreshing] = React.useState(false);
     const [openSideBar, setOpenSideBar] = React.useState();
+    const [viewSched, setViewSched] = React.useState(ViewSchedButton());
     
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -25,7 +26,7 @@ export default function ScheduleAut({navigation}) {
                         </TouchableOpacity>
                         <View style={{ width: '100%', alignItems: 'center', gap: 10, marginTop: 60 }}>
                             <Image
-                                source={require('../../assets/E-Wayste-logo.png')}
+                                source={require('../../../assets/E-Wayste-logo.png')}
                                 style={{width: 180, height: 161, marginBottom: 10}}
                             />
                             <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
@@ -52,6 +53,99 @@ export default function ScheduleAut({navigation}) {
                         </View>
                     </View>
                     <TouchableOpacity style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0)', zIndex: -1}} onPress={() => {setOpenSideBar()}} />
+                </View>
+            </>
+        );
+    }
+
+    function ViewSchedButton() {
+        return (
+            <>
+                <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}>
+                    <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
+                        <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(ViewSchedExtend()); }}>
+                            <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                <Text>View all Events</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </>
+        );
+    }
+
+    function ViewSchedExtend() {
+        return (
+            <>
+                <View style={{ width: 315, marginTop: 20, gap: 10 }}>
+                    <View style={{width: '100%', borderWidth: 0.5}} />
+                    <Text style={{fontWeight: 800}}>Week 1</Text>
+                    <View style={{width: '100%', flexDirection: 'row'}}>
+                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
+                            <Text style={{fontSize: 40, fontWeight: 800}}>02</Text>
+                        </View>
+                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
+                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
+                            <Text>9:00 am</Text>
+                        </View>
+                    </View>
+                    <View style={{width: '100%', flexDirection: 'row'}}>
+                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
+                            <Text style={{fontSize: 40, fontWeight: 800}}>06</Text>
+                        </View>
+                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
+                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
+                            <Text>10:00 am</Text>
+                        </View>
+                    </View>
+                    <Text style={{ fontWeight: 800 }}>Week 2</Text>
+                    <View style={{width: '100%', flexDirection: 'row'}}>
+                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
+                            <Text style={{fontSize: 40, fontWeight: 800}}>12</Text>
+                        </View>
+                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
+                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
+                            <Text>09:00 am</Text>
+                        </View>
+                    </View>
+                    <Text style={{ fontWeight: 800 }}>Week 3</Text>
+                    <View style={{width: '100%', flexDirection: 'row'}}>
+                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
+                            <Text style={{fontSize: 40, fontWeight: 800}}>17</Text>
+                        </View>
+                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
+                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
+                            <Text>10:00 am</Text>
+                        </View>
+                    </View>
+                    <Text style={{ fontWeight: 800 }}>Week 4</Text>
+                    <View style={{width: '100%', flexDirection: 'row'}}>
+                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
+                            <Text style={{fontSize: 40, fontWeight: 800}}>25</Text>
+                        </View>
+                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
+                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
+                            <Text>09:00 am</Text>
+                        </View>
+                    </View>
+                    <View style={{width: '100%', flexDirection: 'row'}}>
+                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(134,231,237)', justifyContent: 'center', alignItems: 'center'}}>
+                            <Text style={{fontSize: 40, fontWeight: 800}}>27</Text>
+                        </View>
+                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(171,247,221)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
+                            <Text style={{fontSize: 18, fontWeight: 800}}>Special Event</Text>
+                            <Text>10:00 am</Text>
+                        </View>
+                    </View>
+                </View>
+                <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}>
+                    <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
+                        <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(ViewSchedButton()); }}>
+                            <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                                <Text>Show less</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </>
         );
@@ -84,7 +178,7 @@ export default function ScheduleAut({navigation}) {
     return (
         <>
             <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgb(81,175,91)', overflow: 'hidden' }}>
-                <TouchableOpacity activeOpacity={0.5}>
+                <TouchableOpacity activeOpacity={0.5} onPress={() => { navigation.navigate('addSched'); }}>
                     <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                         <Ionicons name='add-circle' style={{ fontSize: 60, color: 'rgb(81,175,91)', top: -3, right: -0.9 }} />
                     </View>
@@ -103,7 +197,7 @@ export default function ScheduleAut({navigation}) {
                     <View style={styles.header1}>
                         <View style={styles.header2}>
                             <Image
-                                source={require('../../assets/NatureVector.jpg')}
+                                source={require('../../../assets/NatureVector.jpg')}
                                 style={{
                                     resizeMode: 'stretch',
                                     width: '100%',
@@ -142,6 +236,7 @@ export default function ScheduleAut({navigation}) {
                                 <Text>Special Events</Text>
                             </View>
                         </View>
+                        {viewSched}
                     </SafeAreaView>
                 </SafeAreaView>
             </ScrollView>
