@@ -14,27 +14,30 @@ export default function Landing({ navigation }) {
                             <Ionicons name='arrow-back' style={{fontSize: 40, color: 'rgb(179,229,94)'}} />
                         </TouchableOpacity>
                     </View>
-                    <View style={{ gap: 20 }}>
-                        <View style={{width: 280, height: 200, backgroundColor: 'rgba(203, 203, 203, 1)', borderRadius: 10, overflow: 'hidden',}}>
-                            <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { setTemp(); navigation.navigate('registerUser'); }}>
-                                <View style={{ width: '100%', height: '100%', backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center'}}>
-                                    <Text>User</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{width: 280, height: 200, backgroundColor: 'rgba(203, 203, 203, 1)', borderRadius: 10, overflow: 'hidden',}}>
-                            <TouchableOpacity style={{ width: '100%', height: '100%' }} activeOpacity={0.5} onPress={() => { setTemp(), navigation.navigate('registerAuthority'); }}>
-                                <View style={{ width: '100%', height: '100%', backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center'}}>
-                                    <Text>Authorities</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{width: 280, height: 200, backgroundColor: 'rgba(203, 203, 203, 1)', borderRadius: 10, overflow: 'hidden',}}>
-                            <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { setTemp(); navigation.navigate('registerCollector'); }}>
-                                <View style={{ width: '100%', height: '100%', backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center'}}>
-                                    <Text>Collector</Text>
-                                </View>
-                            </TouchableOpacity>
+                    <View style={{position: 'absolute', paddingVertical: 70, backgroundColor: 'rgb(228,237,229)', bottom: 0, width: '100%', justifyContent: 'center', alignItems: 'center', borderTopLeftRadius: 30, borderTopRightRadius: 30}}>
+                        <View style={{ gap: 20 }}>
+                            <Text>Sign up as:</Text>
+                            <View style={{width: 280, height: 90, backgroundColor: 'rgba(203, 203, 203, 1)', borderRadius: 10, overflow: 'hidden', borderWidth: 0.5}}>
+                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { setTemp(); navigation.navigate('registerUser'); }}>
+                                    <View style={{ width: '100%', height: '100%', backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center'}}>
+                                        <Text>Residents / General Users</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{width: 280, height: 90, backgroundColor: 'rgba(203, 203, 203, 1)', borderRadius: 10, overflow: 'hidden', borderWidth: 0.5}}>
+                                <TouchableOpacity style={{ width: '100%', height: '100%' }} activeOpacity={0.5} onPress={() => { setTemp(), navigation.navigate('registerAuthority'); }}>
+                                    <View style={{ width: '100%', height: '100%', backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center'}}>
+                                        <Text>LGU / Waste Collection Organizations</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{width: 280, height: 90, backgroundColor: 'rgba(203, 203, 203, 1)', borderRadius: 10, overflow: 'hidden', borderWidth: 0.5}}>
+                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { setTemp(); navigation.navigate('registerCollector'); }}>
+                                    <View style={{ width: '100%', height: '100%', backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center'}}>
+                                        <Text>Garbage Collectors</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </View>

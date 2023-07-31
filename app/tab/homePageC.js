@@ -99,6 +99,31 @@ export default function NewsfeedCol({ navigation }) {
         );
     }
 
+    function ViewAllContent() {
+        let temp1 = [];
+        for (let i = 0; i < 10; i++) {
+            temp1.push(
+                <TouchableOpacity activeOpacity={0.5}>
+                    <View style={{ width: 80, height: 80, backgroundColor: '#D6D6D8', marginVertical: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }}>
+                        <Ionicons name='images-outline' style={{fontSize: 40, color: 'white'}} />
+                    </View>
+                </TouchableOpacity>
+            );
+        }
+        
+        <ul>
+            {temp1.map(item =>
+                <li key="{item}">{item}</li>
+            )}
+        </ul>
+
+        return (
+            <View style={{flexDirection: 'row', marginHorizontal: 10, gap: 10}}>
+                {temp1}
+            </View>
+        );
+    }
+
     return (
         <>
             <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideBar(navigation))}}>
@@ -107,15 +132,37 @@ export default function NewsfeedCol({ navigation }) {
             <TouchableOpacity style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }} onPress={() => {navigation.navigate('notification')}}>
                 <Ionicons name='notifications' style={{ fontSize: 35, color: 'rgb(81,175,91)' }} />
             </TouchableOpacity>
+            {/*<TouchableOpacity style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }}>
+                <Ionicons name='notifications' style={{ fontSize: 35, color: 'rgb(81,175,91)' }} />
+            </TouchableOpacity>*/}
             {openSideBar}
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
                 <SafeAreaView style={styles.container}>
                     <View style={{width: '100%', flexDirection: 'row', justifyContent: 'center', paddingTop: 14}}>
-                        <Text style={{ fontSize: 25, fontWeight: 900, color: 'rgb(81,175,91)' }}>NEWSFEED</Text>
+                        <Text style={{ fontSize: 25, fontWeight: 900, color: 'rgb(81,175,91)' }}>DASHBOARD</Text>
                     </View>
-                    <View style={{ marginTop: 35 }}>
+                    <Text style={{position: 'absolute', right: 20, top: 80}}>
+                        <Text style={{fontWeight: 600}}>Wednesday</Text>, April 19, 2023 <Ionicons name='caret-down-circle-outline' style={{fontSize: 20}} />
+                    </Text>
+                    <View style={{width: 330, backgroundColor: 'rgb(231, 247, 233)', borderRadius: 10, overflow: 'hidden', marginBottom: 5, marginTop: 50}}>
+                        <View style={{ flexDirection: 'row', width: '100%' }}>
+                            <Text style={{ left: 10, marginTop: 15, fontWeight: 700 }}>REPORTS TODAY</Text>
+                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 15, marginTop: 15 }}>
+                                <Text style={{textDecorationLine: 'underline'}}>
+                                    View all
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                        <ScrollView horizontal={true}>
+                            {ViewAllContent()}
+                        </ScrollView>
+                    </View>
+                    <View>
+                        <View style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-start'}}>
+                            <Text style={{ fontSize: 20, fontWeight: 900, color: 'rgb(81,175,91)' }}>NEWSFEED</Text>
+                        </View>
                         <View style={{width: 330, backgroundColor: 'rgb(230, 230, 230)', borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: 'rgb(16, 139, 0)', marginBottom: 20}}>
                             <TouchableOpacity activeOpacity={0.5}>
                                 <View style={{backgroundColor: '#ffffff', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 15, alignItems: 'center'}}>

@@ -99,31 +99,6 @@ export default function ReportCol({ navigation }) {
         );
     }
 
-    function ViewAllContent() {
-        let temp1 = [];
-        for (let i = 0; i < 10; i++) {
-            temp1.push(
-                <TouchableOpacity activeOpacity={0.5}>
-                    <View style={{ width: 80, height: 80, backgroundColor: '#D6D6D8', marginVertical: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }}>
-                        <Ionicons name='images-outline' style={{fontSize: 40, color: 'white'}} />
-                    </View>
-                </TouchableOpacity>
-            );
-        }
-        
-        <ul>
-            {temp1.map(item =>
-                <li key="{item}">{item}</li>
-            )}
-        </ul>
-
-        return (
-            <View style={{flexDirection: 'row', marginHorizontal: 10, gap: 10}}>
-                {temp1}
-            </View>
-        );
-    }
-
     return (
         <>
             <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideBar(navigation))}}>
@@ -152,19 +127,6 @@ export default function ReportCol({ navigation }) {
                     </Text>
                     <View style={{ marginTop: 50 }}>
                         <Text style={{fontSize: 20, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 5}}>Banilad, Cebu City</Text>
-                        <View style={{width: 330, backgroundColor: 'rgb(231, 247, 233)', borderRadius: 10, overflow: 'hidden', marginBottom: 20}}>
-                            <View style={{ flexDirection: 'row', width: '100%' }}>
-                                <Text style={{ left: 10, marginTop: 15, fontWeight: 700 }}>REPORTS TODAY</Text>
-                                <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 15, marginTop: 15 }}>
-                                    <Text style={{textDecorationLine: 'underline'}}>
-                                        View all
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                            <ScrollView horizontal={true}>
-                                {ViewAllContent()}
-                            </ScrollView>
-                        </View>
                         {BodyContent ()}
                     </View>
                 </SafeAreaView>

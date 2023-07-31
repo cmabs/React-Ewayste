@@ -14,6 +14,13 @@ export default function AddSched({navigation}) {
     const [minEnd, setMinEnd] = useState();
     const [ampmStart, setAmpmStart] = useState();
     const [ampmEnd, setAmpmEnd] = useState();
+    const [selectType, setSelectType] = useState();
+
+    const Type = [
+        { key: "Collection", value: "Collection" },
+        { key: "Assignment", value: "Assignment" },
+        { key: "Event", value: "Event" },
+    ];
 
     const Month = [
         { key: "January", value: "January" },
@@ -60,6 +67,402 @@ export default function AddSched({navigation}) {
         { key: "PM", value: "PM" },
     ];
 
+    function SelectDateTime() {
+        return (
+            <>
+                <View style={{width: '100%', paddingHorizontal: 25, flexDirection: 'row', gap: 18, marginTop: 25, justifyContent: 'flex-start', alignItems: 'center'}}>
+                    <Text style={{fontSize: 16}}>Select Date:</Text>
+                    <Text>{month}</Text>
+                    <Text>/</Text>
+                    <Text>1</Text>
+                    <Text>/</Text>
+                    <Text>{year}</Text>
+                </View>
+                <View style={{ flexDirection: "row", marginTop: 15, width: '100%', paddingLeft: 25 }}>
+                    <SelectList
+                        setSelected={(e) => { setYear(e); }}
+                        data={Year}
+                        placeholder="Select Year"
+                        boxStyles={{
+                            width: 120,
+                            backgroundColor: "rgb(189,228,124)",
+                            borderRadius: 0,
+                            color: "rgba(45, 105, 35, 1)",
+                            justifyContent: "center",
+                            borderWidth: 0,
+                        }}
+                        dropdownStyles={{
+                            width: 120,
+                            backgroundColor: "rgb(231,247,233)",
+                            top: -10,
+                            marginBottom: -10,
+                            borderRadius: 0,
+                            zIndex: -1,
+                            borderWidth: 0,
+                            alignSelf: 'center',
+                        }}
+                        search={false}
+                    />
+                    <SelectList
+                        setSelected={(e) => { setMonth(e); }}
+                        data={Month}
+                        placeholder="Select Month"
+                        boxStyles={{
+                            width: 130,
+                            backgroundColor: "rgb(189,228,124)",
+                            borderRadius: 0,
+                            color: "rgba(45, 105, 35, 1)",
+                            justifyContent: "center",
+                            borderWidth: 0,
+                        }}
+                        dropdownStyles={{
+                            width: 130,
+                            backgroundColor: "rgb(231,247,233)",
+                            top: -10,
+                            marginBottom: -10,
+                            borderRadius: 0,
+                            zIndex: -1,
+                            borderWidth: 0,
+                            alignSelf: 'center',
+                        }}
+                        search={false}
+                    />
+                </View>
+                <View style={{width: '100%', paddingHorizontal: 25, flexDirection: 'row', gap: 18, marginTop: 25, justifyContent: 'flex-start', alignItems: 'center'}}>
+                    <Text style={{fontSize: 16}}>Select Time:</Text>
+                    <Text>{hourStart} : {minStart} {ampmStart}</Text>
+                    <Text>-</Text>
+                    <Text>{hourEnd} : {minEnd} {ampmEnd}</Text>
+                </View>
+                <View style={{ flexDirection: "row", marginTop: 15, width: '100%', paddingLeft: 25 }}>
+                    <SelectList
+                        setSelected={(e) => { setHourStart(e); }}
+                        data={Hour}
+                        defaultOption={{ key: 1, value: '1' }}
+                        boxStyles={{
+                            width: 60,
+                            backgroundColor: "rgb(189,228,124)",
+                            borderRadius: 0,
+                            color: "rgba(45, 105, 35, 1)",
+                            justifyContent: "center",
+                            borderWidth: 0,
+                        }}
+                        dropdownStyles={{
+                            width: 60,
+                            backgroundColor: "rgb(231,247,233)",
+                            top: -10,
+                            marginBottom: -10,
+                            borderRadius: 0,
+                            zIndex: -1,
+                            borderWidth: 0,
+                            alignSelf: 'center',
+                        }}
+                        search={false}
+                    />
+                    <SelectList
+                        setSelected={(e) => { setMinStart(e); }}
+                        data={Min}
+                        defaultOption={{ key: '00', value: '00' }}
+                        boxStyles={{
+                            width: 60,
+                            backgroundColor: "rgb(189,228,124)",
+                            borderRadius: 0,
+                            color: "rgba(45, 105, 35, 1)",
+                            justifyContent: "center",
+                            borderWidth: 0,
+                        }}
+                        dropdownStyles={{
+                            width: 60,
+                            backgroundColor: "rgb(231,247,233)",
+                            top: -10,
+                            marginBottom: -10,
+                            borderRadius: 0,
+                            zIndex: -1,
+                            borderWidth: 0,
+                            alignSelf: 'center',
+                        }}
+                        search={false}
+                    />
+                    <SelectList
+                        setSelected={(e) => { setAmpmStart(e); }}
+                        data={AmpmTemp}
+                        defaultOption={{ key: 'AM', value: 'AM' }}
+                        boxStyles={{
+                            width: 70,
+                            backgroundColor: "rgb(189,228,124)",
+                            borderRadius: 0,
+                            color: "rgba(45, 105, 35, 1)",
+                            justifyContent: "center",
+                            borderWidth: 0,
+                        }}
+                        dropdownStyles={{
+                            width: 70,
+                            backgroundColor: "rgb(231,247,233)",
+                            top: -10,
+                            marginBottom: -10,
+                            borderRadius: 0,
+                            zIndex: -1,
+                            borderWidth: 0,
+                            alignSelf: 'center',
+                        }}
+                        search={false}
+                    />
+                </View>
+                <View style={{ flexDirection: "row", marginTop: 10, width: '100%', paddingLeft: 25 }}>
+                    <SelectList
+                        setSelected={(e) => { setHourEnd(e); }}
+                        data={Hour}
+                        defaultOption={{ key: 1, value: '1' }}
+                        boxStyles={{
+                            width: 60,
+                            backgroundColor: "rgb(189,228,124)",
+                            borderRadius: 0,
+                            color: "rgba(45, 105, 35, 1)",
+                            justifyContent: "center",
+                            borderWidth: 0,
+                        }}
+                        dropdownStyles={{
+                            width: 60,
+                            backgroundColor: "rgb(231,247,233)",
+                            top: -10,
+                            marginBottom: -10,
+                            borderRadius: 0,
+                            zIndex: -1,
+                            borderWidth: 0,
+                            alignSelf: 'center',
+                        }}
+                        search={false}
+                    />
+                    <SelectList
+                        setSelected={(e) => { setMinEnd(e); }}
+                        data={Min}
+                        defaultOption={{ key: '00', value: '00' }}
+                        boxStyles={{
+                            width: 60,
+                            backgroundColor: "rgb(189,228,124)",
+                            borderRadius: 0,
+                            color: "rgba(45, 105, 35, 1)",
+                            justifyContent: "center",
+                            borderWidth: 0,
+                        }}
+                        dropdownStyles={{
+                            width: 60,
+                            backgroundColor: "rgb(231,247,233)",
+                            top: -10,
+                            marginBottom: -10,
+                            borderRadius: 0,
+                            zIndex: -1,
+                            borderWidth: 0,
+                            alignSelf: 'center',
+                        }}
+                        search={false}
+                    />
+                    <SelectList
+                        setSelected={(e) => { setAmpmEnd(e); }}
+                        data={AmpmTemp}
+                        defaultOption={{ key: 'AM', value: 'AM' }}
+                        boxStyles={{
+                            width: 70,
+                            backgroundColor: "rgb(189,228,124)",
+                            borderRadius: 0,
+                            color: "rgba(45, 105, 35, 1)",
+                            justifyContent: "center",
+                            borderWidth: 0,
+                        }}
+                        dropdownStyles={{
+                            width: 70,
+                            backgroundColor: "rgb(231,247,233)",
+                            top: -10,
+                            marginBottom: -10,
+                            borderRadius: 0,
+                            zIndex: -1,
+                            borderWidth: 0,
+                            alignSelf: 'center',
+                        }}
+                        search={false}
+                    />
+                </View>
+            </>
+        );
+    }
+
+    function Collection() {
+        return (
+            <>
+                <View style={{ width: '100%', paddingHorizontal: 25 }}>
+                    <TextInput
+                        style={{
+                            height: 150,
+                            width: '100%',
+                            backgroundColor: 'rgb(231,247,233)',
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "rgb(215,233,217)",
+                            color: "rgba(45, 105, 35, 1)",
+                            padding: 15,
+                            paddingRight: 8,
+                            textAlignVertical: 'top',
+                        }}
+                        placeholder='Add Description'
+                        multiline={true}
+                    />
+                </View>
+                <View style={{width: '100%', paddingHorizontal: 25, marginTop: 5}}>
+                    <TextInput
+                        style={{
+                            height: 40,
+                            width: '100%',
+                            backgroundColor: 'rgb(231,247,233)',
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "rgb(215,233,217)",
+                            color: "rgba(45, 105, 35, 1)",
+                            paddingLeft: 15,
+                        }}
+                        placeholder='Select Location'
+                    />
+                </View>
+                {SelectDateTime()}
+            </>
+        );
+    }
+
+    function Assignment() {
+        return (
+            <>
+                <View style={{ width: '100%', paddingHorizontal: 25 }}>
+                    <TextInput
+                        style={{
+                            height: 150,
+                            width: '100%',
+                            backgroundColor: 'rgb(231,247,233)',
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "rgb(215,233,217)",
+                            color: "rgba(45, 105, 35, 1)",
+                            padding: 15,
+                            paddingRight: 8,
+                            textAlignVertical: 'top',
+                        }}
+                        placeholder='Add Description'
+                        multiline={true}
+                    />
+                </View>
+                <View style={{width: '100%', paddingHorizontal: 25, marginTop: 5}}>
+                    <TextInput
+                        style={{
+                            height: 40,
+                            width: '100%',
+                            backgroundColor: 'rgb(231,247,233)',
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "rgb(215,233,217)",
+                            color: "rgba(45, 105, 35, 1)",
+                            paddingLeft: 15,
+                        }}
+                        placeholder='Select Collector to Assign'
+                    />
+                </View>
+                <View style={{width: '100%', paddingHorizontal: 25, marginTop: 5}}>
+                    <TextInput
+                        style={{
+                            height: 40,
+                            width: '100%',
+                            backgroundColor: 'rgb(231,247,233)',
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "rgb(215,233,217)",
+                            color: "rgba(45, 105, 35, 1)",
+                            paddingLeft: 15,
+                        }}
+                        placeholder='Select Assignment Location'
+                    />
+                </View>
+                {SelectDateTime()}
+            </>
+        );
+    }
+
+    function Event() {
+        return (
+            <>
+                <View style={{width: '100%', paddingHorizontal: 25}}>
+                    <TextInput
+                        style={{
+                            height: 40,
+                            width: '100%',
+                            backgroundColor: 'rgb(231,247,233)',
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "rgb(215,233,217)",
+                            color: "rgba(45, 105, 35, 1)",
+                            paddingLeft: 15,
+                        }}
+                        placeholder='Add Title'
+                    />
+                </View>
+                <View style={{ width: '100%', paddingHorizontal: 25, marginTop: 5 }}>
+                    <TextInput
+                        style={{
+                            height: 150,
+                            width: '100%',
+                            backgroundColor: 'rgb(231,247,233)',
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "rgb(215,233,217)",
+                            color: "rgba(45, 105, 35, 1)",
+                            padding: 15,
+                            paddingRight: 8,
+                            textAlignVertical: 'top',
+                        }}
+                        placeholder='Add Description'
+                        multiline={true}
+                    />
+                </View>
+                <View style={{width: '100%', paddingHorizontal: 25, marginTop: 5}}>
+                    <TextInput
+                        style={{
+                            height: 40,
+                            width: '100%',
+                            backgroundColor: 'rgb(231,247,233)',
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "rgb(215,233,217)",
+                            color: "rgba(45, 105, 35, 1)",
+                            paddingLeft: 15,
+                        }}
+                        placeholder='Select Location'
+                    />
+                </View>
+                {SelectDateTime()}
+            </>
+        );
+    }
+
+    function DisplayType() {
+        if (selectType === 'Collection') {
+            return (
+                <>
+                    {Collection()}
+                </>
+            );
+        }
+        if (selectType === 'Assignment') {
+            return (
+                <>
+                    {Assignment()}
+                </>
+            );
+        }
+        if (selectType === 'Event') {
+            return (
+                <>
+                    {Event()}
+                </>
+            );
+        }
+    }
+
     return (
         <>
             <View style={{ position: "absolute", height: "100%", width: "100%", justifyContent: "flex-start", alignItems: "center", zIndex: 10, backgroundColor: "rgba(0, 0, 0, 0.85)", }}>
@@ -69,91 +472,24 @@ export default function AddSched({navigation}) {
                     </TouchableOpacity>
                 </View>
                 <View style={{ width: "100%", height: "100%", backgroundColor: "#ffffff" }}>
-                    <ScrollView style={{ width: "100%" }} contentContainerStyle={{ alignItems: 'center', paddingTop: 90, }}>
-                        <Text style={{marginBottom: 40, fontSize: 25, fontWeight: 900, color: 'rgba(113, 112, 108, 1)',}}>SCHEDULE AN EVENT</Text>
-                        <View style={{width: '100%', paddingHorizontal: 25}}>
-                            <Text style={{fontSize: 18, marginBottom: 5}}>
-                                Subject
-                            </Text>
-                            <TextInput
-                                style={{
-                                    height: 40,
-                                    width: '100%',
-                                    backgroundColor: 'rgba(234, 245, 215, 1)',
-                                    borderRadius: 5,
-                                    borderWidth: 1,
-                                    borderColor: "rgb(189,227,124)",
-                                    color: "rgba(45, 105, 35, 1)",
-                                    paddingLeft: 15,
-                                    fontSize: 18,
-                                }}
-                            />
-                        </View>
-                        <View style={{width: '100%', paddingHorizontal: 25, marginTop: 5}}>
-                            <Text style={{fontSize: 16, marginBottom: 5}}>
-                                Location
-                            </Text>
-                            <TextInput
-                                style={{
-                                    height: 40,
-                                    width: '100%',
-                                    backgroundColor: 'rgba(234, 245, 215, 1)',
-                                    borderRadius: 5,
-                                    borderWidth: 1,
-                                    borderColor: "rgb(189,227,124)",
-                                    color: "rgba(45, 105, 35, 1)",
-                                    paddingLeft: 15,
-                                }}
-                            />
-                        </View>
-                        <View style={{width: '100%', paddingHorizontal: 25, flexDirection: 'row', gap: 18, marginTop: 25, justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{fontSize: 16}}>Event Date:</Text>
-                            <Text>{month}</Text>
-                            <Text>/</Text>
-                            <Text>1</Text>
-                            <Text>/</Text>
-                            <Text>{year}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", marginTop: 15 }}>
+                    <ScrollView style={{ width: "100%" }} contentContainerStyle={{ alignItems: 'flex-start', paddingTop: 90, }}>
+                        <Text style={{marginBottom: 5, fontSize: 25, fontWeight: 900, color: 'rgba(113, 112, 108, 1)', width: '100%', paddingLeft: 25}}>CREATE TASK</Text>
+                        <View style={{marginLeft: 25, marginBottom: 10}}>
                             <SelectList
-                                setSelected={(e) => { setYear(e); }}
-                                data={Year}
-                                placeholder="Select Year"
+                                setSelected={(e) => { setSelectType(e); }}
+                                data={Type}
+                                placeholder="Select Type"
                                 boxStyles={{
-                                    width: 120,
-                                    backgroundColor: "#ffffff",
+                                    width: 343,
+                                    backgroundColor: "rgb(189,228,124)",
                                     borderRadius: 0,
                                     color: "rgba(45, 105, 35, 1)",
                                     justifyContent: "center",
-                                    borderRightWidth: 0,
-                                }}
-                                dropdownStyles={{
-                                    width: 80,
-                                    backgroundColor: "rgb(189,227,124)",
-                                    top: -10,
-                                    marginBottom: -10,
-                                    borderRadius: 0,
-                                    zIndex: -1,
                                     borderWidth: 0,
-                                    alignSelf: 'center',
-                                }}
-                                search={false}
-                            />
-                            <SelectList
-                                setSelected={(e) => { setMonth(e); }}
-                                data={Month}
-                                placeholder="Select Month"
-                                boxStyles={{
-                                    width: 130,
-                                    backgroundColor: "#ffffff",
-                                    borderRadius: 0,
-                                    color: "rgba(45, 105, 35, 1)",
-                                    justifyContent: "center",
-                                    borderLeftWidth: 0,
                                 }}
                                 dropdownStyles={{
-                                    width: 115,
-                                    backgroundColor: "rgb(189,227,124)",
+                                    width: 343,
+                                    backgroundColor: "rgb(231,247,233)",
                                     top: -10,
                                     marginBottom: -10,
                                     borderRadius: 0,
@@ -164,169 +500,9 @@ export default function AddSched({navigation}) {
                                 search={false}
                             />
                         </View>
-                        <View style={{width: '100%', paddingHorizontal: 25, flexDirection: 'row', gap: 18, marginTop: 25, justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{fontSize: 16}}>Event Time:</Text>
-                            <Text>{hourStart} : {minStart} {ampmStart}</Text>
-                            <Text>-</Text>
-                            <Text>{hourEnd} : {minEnd} {ampmEnd}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", marginTop: 15 }}>
-                            <SelectList
-                                setSelected={(e) => { setHourStart(e); }}
-                                data={Hour}
-                                defaultOption={{ key: 1, value: '1' }}
-                                boxStyles={{
-                                    width: 60,
-                                    backgroundColor: "#ffffff",
-                                    borderRadius: 0,
-                                    color: "rgba(45, 105, 35, 1)",
-                                    justifyContent: "center",
-                                    borderRightWidth: 0,
-                                }}
-                                dropdownStyles={{
-                                    width: 60,
-                                    backgroundColor: "rgb(189,227,124)",
-                                    top: -10,
-                                    marginBottom: -10,
-                                    borderRadius: 0,
-                                    zIndex: -1,
-                                    borderWidth: 0,
-                                    alignSelf: 'center',
-                                }}
-                                search={false}
-                            />
-                            <SelectList
-                                setSelected={(e) => { setMinStart(e); }}
-                                data={Min}
-                                defaultOption={{ key: '00', value: '00' }}
-                                boxStyles={{
-                                    width: 60,
-                                    backgroundColor: "#ffffff",
-                                    borderRadius: 0,
-                                    color: "rgba(45, 105, 35, 1)",
-                                    justifyContent: "center",
-                                    borderLeftWidth: 0,
-                                    borderRightWidth: 0,
-                                }}
-                                dropdownStyles={{
-                                    width: 60,
-                                    backgroundColor: "rgb(189,227,124)",
-                                    top: -10,
-                                    marginBottom: -10,
-                                    borderRadius: 0,
-                                    zIndex: -1,
-                                    borderWidth: 0,
-                                    alignSelf: 'center',
-                                }}
-                                search={false}
-                            />
-                            <SelectList
-                                setSelected={(e) => { setAmpmStart(e); }}
-                                data={AmpmTemp}
-                                defaultOption={{ key: 'AM', value: 'AM' }}
-                                boxStyles={{
-                                    width: 70,
-                                    backgroundColor: "#ffffff",
-                                    borderRadius: 0,
-                                    color: "rgba(45, 105, 35, 1)",
-                                    justifyContent: "center",
-                                    borderLeftWidth: 0,
-                                }}
-                                dropdownStyles={{
-                                    width: 70,
-                                    backgroundColor: "rgb(189,227,124)",
-                                    top: -10,
-                                    marginBottom: -10,
-                                    borderRadius: 0,
-                                    zIndex: -1,
-                                    borderWidth: 0,
-                                    alignSelf: 'center',
-                                }}
-                                search={false}
-                            />
-                        </View>
-                        <View style={{ flexDirection: "row", marginTop: 10 }}>
-                            <SelectList
-                                setSelected={(e) => { setHourEnd(e); }}
-                                data={Hour}
-                                defaultOption={{ key: 1, value: '1' }}
-                                boxStyles={{
-                                    width: 60,
-                                    backgroundColor: "#ffffff",
-                                    borderRadius: 0,
-                                    color: "rgba(45, 105, 35, 1)",
-                                    justifyContent: "center",
-                                    borderRightWidth: 0,
-                                }}
-                                dropdownStyles={{
-                                    width: 60,
-                                    backgroundColor: "rgb(189,227,124)",
-                                    top: -10,
-                                    marginBottom: -10,
-                                    borderRadius: 0,
-                                    zIndex: -1,
-                                    borderWidth: 0,
-                                    alignSelf: 'center',
-                                }}
-                                search={false}
-                            />
-                            <SelectList
-                                setSelected={(e) => { setMinEnd(e); }}
-                                data={Min}
-                                defaultOption={{ key: '00', value: '00' }}
-                                boxStyles={{
-                                    width: 60,
-                                    backgroundColor: "#ffffff",
-                                    borderRadius: 0,
-                                    color: "rgba(45, 105, 35, 1)",
-                                    justifyContent: "center",
-                                    borderLeftWidth: 0,
-                                    borderRightWidth: 0,
-                                }}
-                                dropdownStyles={{
-                                    width: 60,
-                                    backgroundColor: "rgb(189,227,124)",
-                                    top: -10,
-                                    marginBottom: -10,
-                                    borderRadius: 0,
-                                    zIndex: -1,
-                                    borderWidth: 0,
-                                    alignSelf: 'center',
-                                }}
-                                search={false}
-                            />
-                            <SelectList
-                                setSelected={(e) => { setAmpmEnd(e); }}
-                                data={AmpmTemp}
-                                defaultOption={{ key: 'AM', value: 'AM' }}
-                                boxStyles={{
-                                    width: 70,
-                                    backgroundColor: "#ffffff",
-                                    borderRadius: 0,
-                                    color: "rgba(45, 105, 35, 1)",
-                                    justifyContent: "center",
-                                    borderLeftWidth: 0,
-                                }}
-                                dropdownStyles={{
-                                    width: 70,
-                                    backgroundColor: "rgb(189,227,124)",
-                                    top: -10,
-                                    marginBottom: -10,
-                                    borderRadius: 0,
-                                    zIndex: -1,
-                                    borderWidth: 0,
-                                    alignSelf: 'center',
-                                }}
-                                search={false}
-                            />
-                        </View>
-                        <View style={{width: '100%', paddingHorizontal: 25, marginTop: 25}}>
-                            <Text style={{fontSize: 16, marginBottom: 5}}>
-                                Description
-                            </Text>
-                        </View>
+                        {DisplayType()}
                         <View style={{width: '100%', marginTop: 30, marginBottom: 90}}>
-                            <Button title='ADD SCHEDULE' />
+                            <Button title='SAVE' />
                         </View>
                     </ScrollView>
                 </View>
