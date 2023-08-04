@@ -10,7 +10,7 @@ export default function Registration1({ navigation }) {
         <ScrollView contentContainerStyle={{flexGrow:1}}>
             <View style={styles.container}>
                 <View style={{position: 'absolute',width: '100%', alignItems: 'flex-start', top: 30, left: 20}}>
-                    <TouchableOpacity onPress={() => {navigation.navigate('landing')}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate('register')}}>
                         <Ionicons name='arrow-back' style={{fontSize: 40, color: 'rgba(16, 139, 0, 1)'}} />
                     </TouchableOpacity>
                 </View>
@@ -18,29 +18,19 @@ export default function Registration1({ navigation }) {
                     <Text style={styles.title}>CREATE ACCOUNT</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="First Name"
+                        placeholder="Province"
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Last Name"
+                        placeholder="Municipality"
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Username"
+                        placeholder="Barangay"
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Email Address"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Password"
-                        secureTextEntry={true}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Confirm Password"
-                        secureTextEntry={true}
+                        placeholder="Contact Number"
                     />
                 </View>
                 <View style={styles.containerChkbx}>
@@ -65,6 +55,12 @@ export default function Registration1({ navigation }) {
                             </Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={{flexDirection: 'row', gap: 5, alignItems: 'center', marginVertical: 10}}>
+                        <Text style={{fontSize: 14, fontWeight: 500}}>Already have an account?</Text>
+                        <TouchableOpacity activeOpacity={0.5} onPress={() => {navigation.navigate('login')}}>
+                            <Text style={{color: 'rgb(0,123,0)', fontSize: 16, fontWeight: 900}}>Sign in</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </ScrollView>
@@ -75,22 +71,22 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: 'rgb(246, 242, 239)',
+        backgroundColor: '#ffffff',
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
     containerBtn: {
-        top: 210,
+        top: 250,
         gap: 10,
     },
     containerFrm: {
         justifyContent: 'center',
         alignItems: 'center',
-        top: 130,
+        top: 170,
     },
     containerChkbx: {
         flexDirection: "row",
-        top: 170,
+        top: 210,
         left: -12,
         width: 260,
     },

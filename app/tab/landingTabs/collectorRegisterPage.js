@@ -10,37 +10,31 @@ export default function Registration2({ navigation }) {
         <ScrollView contentContainerStyle={{flexGrow:1}}>
             <View style={styles.container}>
                 <View style={{position: 'absolute',width: '100%', alignItems: 'flex-start', top: 30, left: 20}}>
-                    <TouchableOpacity onPress={() => {navigation.navigate('landing')}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate('register')}}>
                         <Ionicons name='arrow-back' style={{fontSize: 40, color: 'rgba(16, 139, 0, 1)'}} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.containerFrm}>
-                    <Text style={styles.title}>CREATE COLLECTOR ACCOUNT</Text>
+                    <Text style={styles.title}>CREATE ACCOUNT</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="First Name"
+                        placeholder="Province"
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Last Name"
+                        placeholder="Municipality"
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Username"
+                        placeholder="Barangay"
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Email Address"
+                        placeholder="Contact Number"
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Password"
-                        secureTextEntry={true}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Confirm Password"
-                        secureTextEntry={true}
+                        placeholder="Plate Number"
                     />
                 </View>
                 <View style={styles.containerChkbx}>
@@ -65,6 +59,12 @@ export default function Registration2({ navigation }) {
                             </Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={{flexDirection: 'row', gap: 5, alignItems: 'center', marginVertical: 10}}>
+                        <Text style={{fontSize: 14, fontWeight: 500}}>Already have an account?</Text>
+                        <TouchableOpacity activeOpacity={0.5} onPress={() => {navigation.navigate('login')}}>
+                            <Text style={{color: 'rgb(0,123,0)', fontSize: 16, fontWeight: 900}}>Sign in</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </ScrollView>
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: 'rgb(246, 242, 239)',
+        backgroundColor: '#ffffff',
         justifyContent: 'flex-start',
         alignItems: 'center',
     },

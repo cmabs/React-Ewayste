@@ -49,7 +49,7 @@ export default function Login({navigation}) {
                     </View>
                     <Text>Don't have an account yet?</Text>
                     <View style={styles.button2}>
-                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('registerUser') }}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('register') }}>
                             <Text style={styles.buttonTxt2}>
                                 Create an Account
                             </Text>

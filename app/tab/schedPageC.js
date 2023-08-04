@@ -181,12 +181,12 @@ export default function ScheduleCol({ navigation }) {
                         <Text style={{fontSize: 20, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 5}}>Banilad, Cebu City</Text>
                         <Calendar style={{ width: 330, backgroundColor: 'rgb(236, 252, 238)', borderRadius: 10, borderWidth: 0.5, borderColor: 'rgb(16, 139, 0)', paddingBottom: 15 }}
                             markedDates={{
-                                '2023-07-02': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                '2023-07-06': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                '2023-07-12': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                '2023-07-17': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                '2023-07-25': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                '2023-07-27': { selected: true, selectedColor: 'rgb(134, 231, 237)' }
+                                '2023-08-02': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
+                                '2023-08-06': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
+                                '2023-08-12': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
+                                '2023-08-17': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
+                                '2023-08-25': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
+                                '2023-08-27': { selected: true, selectedColor: 'rgb(134, 231, 237)' }
                             }}
                         />
                     </View>

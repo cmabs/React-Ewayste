@@ -8,6 +8,7 @@ import { SelectList } from 'react-native-dropdown-select-list';
 export default function AddSched({navigation}) {
     const [year, setYear] = useState();
     const [month, setMonth] = useState();
+    const [day, setDay] = useState();
     const [hourStart, setHourStart] = useState();
     const [minStart, setMinStart] = useState();
     const [hourEnd, setHourEnd] = useState();
@@ -44,6 +45,33 @@ export default function AddSched({navigation}) {
         ctr++;
     }
 
+    const Day = [];
+    let ctr4 = 0;
+    if (month === 'January' || month === 'March' || month === 'May' || month === 'July' || month === 'August' || month === 'October' || month === 'December') {
+        for (let i = 1; i <= 31; i++) {
+            Day[ctr4] = { key: i, value: i };
+            ctr4++;
+        }
+    }
+    if (month === 'April' || month === 'June' || month === 'September' || month === 'November') {
+        for (let i = 1; i <= 30; i++) {
+            Day[ctr4] = { key: i, value: i };
+            ctr4++;
+        }
+    }
+    if (month === 'February' && (Number(year) % 4 === 0)) {
+        for (let i = 1; i <= 29; i++) {
+            Day[ctr4] = { key: i, value: i };
+            ctr4++;
+        }
+    }
+    if (month === 'February' && (Number(year) % 4 != 0)) {
+        for (let i = 1; i <= 28; i++) {
+            Day[ctr4] = { key: i, value: i };
+            ctr4++;
+        }
+    }
+
     const Hour = [];
     let ctr2 = 0;
     for (let i = 1; i <= 12; i++) {
@@ -74,7 +102,7 @@ export default function AddSched({navigation}) {
                     <Text style={{fontSize: 16}}>Select Date:</Text>
                     <Text>{month}</Text>
                     <Text>/</Text>
-                    <Text>1</Text>
+                    <Text>{day}</Text>
                     <Text>/</Text>
                     <Text>{year}</Text>
                 </View>
@@ -82,9 +110,9 @@ export default function AddSched({navigation}) {
                     <SelectList
                         setSelected={(e) => { setYear(e); }}
                         data={Year}
-                        placeholder="Select Year"
+                        placeholder="Year"
                         boxStyles={{
-                            width: 120,
+                            width: 110,
                             backgroundColor: "rgb(189,228,124)",
                             borderRadius: 0,
                             color: "rgba(45, 105, 35, 1)",
@@ -92,7 +120,7 @@ export default function AddSched({navigation}) {
                             borderWidth: 0,
                         }}
                         dropdownStyles={{
-                            width: 120,
+                            width: 110,
                             backgroundColor: "rgb(231,247,233)",
                             top: -10,
                             marginBottom: -10,
@@ -106,7 +134,7 @@ export default function AddSched({navigation}) {
                     <SelectList
                         setSelected={(e) => { setMonth(e); }}
                         data={Month}
-                        placeholder="Select Month"
+                        placeholder="Month"
                         boxStyles={{
                             width: 130,
                             backgroundColor: "rgb(189,228,124)",
@@ -117,6 +145,30 @@ export default function AddSched({navigation}) {
                         }}
                         dropdownStyles={{
                             width: 130,
+                            backgroundColor: "rgb(231,247,233)",
+                            top: -10,
+                            marginBottom: -10,
+                            borderRadius: 0,
+                            zIndex: -1,
+                            borderWidth: 0,
+                            alignSelf: 'center',
+                        }}
+                        search={false}
+                    />
+                    <SelectList
+                        setSelected={(e) => { setDay(e); }}
+                        data={Day}
+                        placeholder="Day"
+                        boxStyles={{
+                            width: 100,
+                            backgroundColor: "rgb(189,228,124)",
+                            borderRadius: 0,
+                            color: "rgba(45, 105, 35, 1)",
+                            justifyContent: "center",
+                            borderWidth: 0,
+                        }}
+                        dropdownStyles={{
+                            width: 100,
                             backgroundColor: "rgb(231,247,233)",
                             top: -10,
                             marginBottom: -10,
@@ -501,8 +553,12 @@ export default function AddSched({navigation}) {
                             />
                         </View>
                         {DisplayType()}
-                        <View style={{width: '100%', marginTop: 30, marginBottom: 90}}>
-                            <Button title='SAVE' />
+                        <View style={{width: '100%', marginTop: 30, marginBottom: 90, alignItems: 'center'}}>
+                            <View style={styles.button}>
+                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5}>
+                                    <Text style={styles.buttonTxt}>Save</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </ScrollView>
                 </View>
@@ -510,3 +566,31 @@ export default function AddSched({navigation}) {
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    button: {
+        width: 157,
+        height: 45,
+        backgroundColor: 'rgb(0,123,0)',
+        borderRadius: 100,
+        overflow: 'hidden',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+        elevation: 3,
+    },
+    buttonTxt: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgb(81,175,91)',
+        textAlign: 'center',
+        verticalAlign: 'middle',
+        color: '#ffffff',
+        fontWeight: '900',
+        fontSize: 16,
+    },
+})
