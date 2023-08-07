@@ -87,6 +87,9 @@ export default function ScheduleAut({navigation}) {
                         <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
                             <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
                             <Text>9:00 am</Text>
+                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
+                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <View style={{width: '100%', flexDirection: 'row'}}>
@@ -96,6 +99,9 @@ export default function ScheduleAut({navigation}) {
                         <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
                             <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
                             <Text>10:00 am</Text>
+                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
+                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <Text style={{ fontWeight: 800 }}>Week 2</Text>
@@ -106,6 +112,9 @@ export default function ScheduleAut({navigation}) {
                         <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
                             <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
                             <Text>09:00 am</Text>
+                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
+                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <Text style={{ fontWeight: 800 }}>Week 3</Text>
@@ -116,6 +125,9 @@ export default function ScheduleAut({navigation}) {
                         <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
                             <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
                             <Text>10:00 am</Text>
+                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
+                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <Text style={{ fontWeight: 800 }}>Week 4</Text>
@@ -126,6 +138,9 @@ export default function ScheduleAut({navigation}) {
                         <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
                             <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
                             <Text>09:00 am</Text>
+                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
+                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <View style={{width: '100%', flexDirection: 'row'}}>
@@ -135,6 +150,9 @@ export default function ScheduleAut({navigation}) {
                         <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(171,247,221)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
                             <Text style={{fontSize: 18, fontWeight: 800}}>Special Event</Text>
                             <Text>10:00 am</Text>
+                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
+                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>

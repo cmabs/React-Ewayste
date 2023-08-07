@@ -150,13 +150,13 @@ export default function ReportAut({navigation}) {
 
     return (
         <>
-            <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgb(81,175,91)', overflow: 'hidden' }}>
+            {/*<View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgb(81,175,91)', overflow: 'hidden' }}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                         <Ionicons name='add-circle' style={{ fontSize: 60, color: 'rgb(81,175,91)', top: -3, right: -0.9 }} />
                     </View>
                 </TouchableOpacity>
-            </View>
+            </View>*/}
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>

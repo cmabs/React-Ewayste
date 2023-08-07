@@ -107,13 +107,13 @@ export default function ReportCol({ navigation }) {
             <TouchableOpacity style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }} onPress={() => {navigation.navigate('notification')}}>
                 <Ionicons name='notifications' style={{ fontSize: 35, color: 'rgb(81,175,91)' }} />
             </TouchableOpacity>
-            <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgb(81,175,91)', overflow: 'hidden' }}>
+            {/*<View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgb(81,175,91)', overflow: 'hidden' }}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                         <Ionicons name='add-circle' style={{ fontSize: 60, color: 'rgb(81,175,91)', top: -3, right: -0.9 }} />
                     </View>
                 </TouchableOpacity>
-            </View>
+            </View>*/}
             {openSideBar}
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -126,7 +126,7 @@ export default function ReportCol({ navigation }) {
                         <Text style={{fontWeight: 600}}>Wednesday</Text>, April 19, 2023 <Ionicons name='caret-down-circle-outline' style={{fontSize: 20}} />
                     </Text>
                     <View style={{ marginTop: 50 }}>
-                        <Text style={{fontSize: 20, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 5}}>Banilad, Cebu City</Text>
+                        <Text style={{fontSize: 20, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 5}}>Banilad, Cebu City <Ionicons name='caret-down-circle-outline' style={{fontSize: 20}} /></Text>
                         {BodyContent ()}
                     </View>
                 </SafeAreaView>
