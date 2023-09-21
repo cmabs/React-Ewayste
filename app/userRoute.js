@@ -9,6 +9,7 @@ import Map from './tab/mapPage';
 import Schedule from './tab/schedPage';
 import Notifications from './tab/notifPage';
 import Profile from './tab/profilePage';
+import Camera from './tab/cameraPage';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,6 +35,9 @@ export default function UserLayout() {
                     }
                     if (rn === 'notification') {
                         iconName = focused ? 'notifications' : 'notifications-outline'
+                    }
+                    if (rn === 'camera') {
+                        iconName = focused ? 'camera' : 'camera-outline'
                     }
 
                     return <Ionicons name={iconName} size={size} color={color} />
@@ -66,6 +70,7 @@ export default function UserLayout() {
             <Tab.Screen name='schedule' component={Schedule} options={{ headerShown: false }} />
             <Tab.Screen name='notification' component={Notifications} options={{ headerShown: false }} />
             <Tab.Screen name='profile' component={Profile} options={{ headerShown: false, tabBarItemStyle: { display: 'none' }, tabBarStyle: { display: 'none' }  }} />
+            <Tab.Screen name='camera' component={Camera} options={{ headerShown: false, tabBarItemStyle: { display: 'none' }, tabBarStyle: { display: 'none' }  }} />
         </Tab.Navigator>
     );
 }

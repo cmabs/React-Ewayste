@@ -105,7 +105,7 @@ export default function Report({ navigation }) {
                 <Ionicons name='menu' style={{ fontSize: 40, color: 'rgb(81,175,91)' }} />
             </TouchableOpacity>
             <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgb(81,175,91)', overflow: 'hidden' }}>
-                <TouchableOpacity activeOpacity={0.5}>
+                <TouchableOpacity activeOpacity={0.5} onPress={() => {navigation.navigate('camera')}}>
                     <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                         <Ionicons name='add-circle' style={{ fontSize: 60, color: 'rgb(81,175,91)', top: -3, right: -0.9 }} />
                     </View>
