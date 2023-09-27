@@ -1,16 +1,44 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, Text, SafeAreaView, Image, TouchableOpacity, View, Button, TextInput } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SelectList } from 'react-native-dropdown-select-list';
 
 export default function SignUp({ navigation }) {
-    const [accountType, setAccountType] = useState();
+    const [accountType, setAccountType] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [userName, setUserName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const Type = [
-        { key: "Residents / General Users", value: "Residents / General Users" },
-        { key: "LGU / Waste Management Head", value: "LGU / Waste Management Head" },
-        { key: "Garbage Collector", value: "Garbage Collector" },
-    ];
+    const storeData = async () => {
+        if ((firstName && lastName && userName && email && password) && (firstName.length > 0 && lastName.length > 0 && userName.length > 0 && email.length > 0 && password.length > 0)) {
+            try {
+                await AsyncStorage.setItem('accountType', accountType);
+                await AsyncStorage.setItem('accountFName', firstName);
+                await AsyncStorage.setItem('accountLName', lastName);
+                await AsyncStorage.setItem('accountUName', userName);
+                await AsyncStorage.setItem('accountEmail', email);
+                await AsyncStorage.setItem('accountPass', password);
+                await AsyncStorage.flushGetRequests();
+                clearForm();
+                Redirect();
+            } catch (error) {
+                console.log(error.message);
+            }
+        } else {
+            console.log("Empty or Incomplete form! Unable to save data.");
+        }
+    }
+
+    function clearForm() {
+        setFirstName("");
+        setLastName("");
+        setUserName("");
+        setEmail("");
+        setPassword("");
+    }
 
     function Redirect() {
         if (accountType === 'Residents / General Users') {
@@ -24,11 +52,17 @@ export default function SignUp({ navigation }) {
         }
     }
 
+    const Type = [
+        { key: "Residents / General Users", value: "Residents / General Users" },
+        { key: "LGU / Waste Management Head", value: "LGU / Waste Management Head" },
+        { key: "Garbage Collector", value: "Garbage Collector" },
+    ];
+
     return (
         <>
             <View style={{ position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', zIndex: 99, backgroundColor: '#ffffff' }}>
                 <View style={{position: 'absolute',width: '100%', alignItems: 'flex-start', top: 30, left: 20}}>
-                    <TouchableOpacity onPress={() => { navigation.navigate('landing') }}>
+                    <TouchableOpacity onPress={() => { clearForm(); navigation.navigate('landing') }}>
                         <Ionicons name='arrow-back' style={{fontSize: 40, color: 'rgba(16, 139, 0, 1)'}} />
                     </TouchableOpacity>
                 </View>
@@ -72,34 +106,44 @@ export default function SignUp({ navigation }) {
                                 search={false}
                             />
                             <TextInput
+                                value={firstName}
                                 style={styles.input}
                                 placeholder="First Name"
+                                onChangeText={(e) => {setFirstName(e)}}
                             />
                             <TextInput
+                                value={lastName}
                                 style={styles.input}
                                 placeholder="Last Name"
+                                onChangeText={(e) => {setLastName(e)}}
                             />
                             <TextInput
+                                value={userName}
                                 style={styles.input}
                                 placeholder="Username"
+                                onChangeText={(e) => {setUserName(e)}}
                             />
                             <TextInput
+                                value={email}
                                 style={styles.input}
                                 placeholder="Email Address"
+                                onChangeText={(e) => {setEmail(e.toLowerCase())}}
                             />
                             <TextInput
+                                value={password}
                                 style={styles.input}
                                 placeholder="Password"
                                 secureTextEntry={true}
+                                onChangeText={(e) => {setPassword(e)}}
                             />
                             <View style={styles.button}>
-                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => {Redirect()}}>
+                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => {storeData()}}>
                                     <Text style={styles.buttonTxt}>Next</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={{flexDirection: 'row', gap: 5, alignItems: 'center', marginVertical: 10}}>
                                 <Text style={{fontSize: 14, fontWeight: 500}}>Already have an account?</Text>
-                                <TouchableOpacity activeOpacity={0.5} onPress={() => {navigation.navigate('login')}}>
+                                <TouchableOpacity activeOpacity={0.5} onPress={() => {clearForm(); navigation.navigate('login')}}>
                                     <Text style={{color: 'rgb(0,123,0)', fontSize: 16, fontWeight: 900}}>Sign in</Text>
                                 </TouchableOpacity>
                             </View>

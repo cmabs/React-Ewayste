@@ -1,26 +1,105 @@
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
-import SessionStorage from 'react-native-session-storage';
+import { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { db, auth } from '../../../firebase_config';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
 export default function Login({navigation}) {
+    const [usernameEmail, setUsernameEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [users, setUsers] = useState([]);
+
+    const usersCollection = collection(db, "users");
+
+    useEffect(() => {
+        const getUsers = async () => {
+            const data = await getDocs(usersCollection);
+
+            setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        };
+        getUsers();
+    }, [])
+
+    const loginUser = async () => {
+        let email;
+        let usernameUsed = false;
+        
+        users.map((user) => {
+            if(user.username === usernameEmail) {
+                usernameUsed = true;
+            }
+        })
+
+        if(usernameUsed) {
+            users.map((user) => {
+                if(user.username === usernameEmail) {
+                    email = user.email;
+                }
+            })
+        } else if(!usernameUsed) {
+            email = usernameEmail;
+        }
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            Redirect(email);
+        } catch(error) {
+            console.log(error.message);
+        }
+    }
+
+    function Redirect(email) {
+        let navTo;
+        
+        users.map((user) => {
+            if(user.email === email) {
+                navTo = user.accountType;
+            }
+        })
+
+        clearForm();
+        
+        if (navTo === 'Residents / General Users') {
+            navigation.navigate('userRoute');
+        }
+        if (navTo === 'LGU / Waste Management Head') {
+            navigation.navigate('authorityRoute');
+        }
+        if (navTo === 'Garbage Collector') {
+            navigation.navigate('collectorRoute');
+        }
+    }
+
+    function clearForm() {
+        setUsernameEmail("");
+        setPassword("");
+    }
+
     return (
         <ScrollView contentContainerStyle={{flexGrow:1}}>
             <View style={styles.container}>
                 <View style={{position: 'absolute',width: '100%', alignItems: 'flex-start', top: 30, left: 20}}>
-                    <TouchableOpacity onPress={() => {navigation.navigate('landing')}}>
+                    <TouchableOpacity onPress={() => {clearForm(); navigation.navigate('landing')}}>
                         <Ionicons name='arrow-back' style={{fontSize: 40, color: 'rgba(16, 139, 0, 1)'}} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.containerFrm}>
                     <Text style={styles.title}>LOG IN ACCOUNT</Text>
                     <TextInput
+                        value={usernameEmail}
                         style={styles.input}
                         placeholder="Username / Email"
+                        onChangeText={(e) => {setUsernameEmail(e)}}
                     />
                     <TextInput
+                        value={password}
                         style={styles.input}
                         placeholder="Password"
                         secureTextEntry={true}
+                        onChangeText={(e) => {setPassword(e)}}
                     />
                 </View>
                 <View  style={styles.divide}>
@@ -41,7 +120,7 @@ export default function Login({navigation}) {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.button1}>
-                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('userRoute'); }}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { loginUser() }}>
                             <Text style={styles.buttonTxt1}>
                                 Sign in
                             </Text>
@@ -49,7 +128,7 @@ export default function Login({navigation}) {
                     </View>
                     <Text>Don't have an account yet?</Text>
                     <View style={styles.button2}>
-                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('register') }}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { clearForm(); navigation.navigate('register') }}>
                             <Text style={styles.buttonTxt2}>
                                 Create an Account
                             </Text>
@@ -66,7 +145,7 @@ const styles = StyleSheet.create({
         height: 550,
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: 'rgb(246, 242, 239)',
+        backgroundColor: 'white',
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
@@ -112,7 +191,7 @@ const styles = StyleSheet.create({
     },
     divLineTxt: {
         top: -11,
-        backgroundColor: 'rgb(246, 242, 239)',
+        backgroundColor: 'white',
         width: 100,
         textAlign: 'center',
     },

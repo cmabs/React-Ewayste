@@ -1,11 +1,80 @@
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { useState } from "react";
 import CheckBox from '../../../components/CheckBox';
-import SessionStorage from 'react-native-session-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import { db, auth } from '../../../firebase_config';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function Registration2({ navigation }) {
     const [agree, setAgree] = useState(false);
+    const [province, setProvince] = useState("");
+    const [municipality, setMunicipality] = useState("");
+    const [barangay, setBarangay] = useState("");
+    const [contactNo, setContactNo] = useState("");
+    const [plateNo, setPlateNo] = useState("");
+    
+    const usersCollection = collection(db, "users");
+
+    const retrieveData = async () => {
+        if ((province && municipality && barangay && contactNo) && (province.length > 0 && municipality.length > 0 && barangay.length > 0 && contactNo.length > 0)) {
+            try {
+                const accountType = await AsyncStorage.getItem('accountType');
+                const firstName = await AsyncStorage.getItem('accountFName');
+                const lastName = await AsyncStorage.getItem('accountLName');
+                const username = await AsyncStorage.getItem('accountUName');
+                const email = await AsyncStorage.getItem('accountEmail');
+                const password = await AsyncStorage.getItem('accountPass');
+                await AsyncStorage.flushGetRequests();
+                registerUser(accountType, firstName, lastName, username, email, password);
+            } catch (error) {
+                console.log(error.message);
+            }   
+        } else {
+            console.log("Empty or Incomplete form! Unable to save data.");
+        }
+    }
+    
+    const registerUser = async (accountType, firstName, lastName, username, email, password) => {
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            createUser(accountType, firstName, lastName, username, email);
+        } catch(error) {
+            console.log(error.message);
+        }
+    };
+    
+    const createUser = async (accountType, firstName, lastName, username, email) => {
+        await addDoc(usersCollection, {
+            accountType: accountType,
+            firstName: firstName,
+            lastName: lastName,
+            username: username,
+            email: email,
+            province: province,
+            municipality: municipality,
+            barangay: barangay,
+            contactNo: contactNo,
+            plateNo: plateNo
+        });
+        clearForm();
+        Redirect();
+    };
+
+    function clearForm() {
+        setProvince("");
+        setMunicipality("");
+        setBarangay("");
+        setContactNo("");
+        setPlateNo("");
+    }
+
+    function Redirect() {
+        navigation.navigate('collectorRoute');
+    }
+
     return (
         <ScrollView contentContainerStyle={{flexGrow:1}}>
             <View style={styles.container}>
@@ -17,24 +86,34 @@ export default function Registration2({ navigation }) {
                 <View style={styles.containerFrm}>
                     <Text style={styles.title}>CREATE ACCOUNT</Text>
                     <TextInput
+                        value={province}
                         style={styles.input}
                         placeholder="Province"
+                        onChangeText={(e) => {setProvince(e)}}
                     />
                     <TextInput
+                        value={municipality}
                         style={styles.input}
                         placeholder="Municipality"
+                        onChangeText={(e) => {setMunicipality(e)}}
                     />
                     <TextInput
+                        value={barangay}
                         style={styles.input}
                         placeholder="Barangay"
+                        onChangeText={(e) => {setBarangay(e)}}
                     />
                     <TextInput
+                        value={contactNo}
                         style={styles.input}
                         placeholder="Contact Number"
+                        onChangeText={(e) => {setContactNo(e)}}
                     />
                     <TextInput
+                        value={plateNo}
                         style={styles.input}
                         placeholder="Plate Number"
+                        onChangeText={(e) => {setPlateNo(e)}}
                     />
                 </View>
                 <View style={styles.containerChkbx}>
@@ -46,7 +125,7 @@ export default function Registration2({ navigation }) {
                 </View>
                 <View style={styles.containerBtn}>
                     <View style={styles.button1}>
-                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { navigation.navigate('collectorRoute'); }}>
+                        <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={() => { retrieveData() }}>
                             <Text style={styles.buttonTxt1}>
                                 Create Account
                             </Text>
