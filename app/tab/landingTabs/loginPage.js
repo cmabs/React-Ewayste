@@ -26,6 +26,16 @@ export default function Login({navigation}) {
     const loginUser = async () => {
         let email;
         let usernameUsed = false;
+
+        let accountType;
+        let firstName;
+        let lastName;
+        let username;
+        let province;
+        let municipality;
+        let barangay;
+        let contactNo;
+        let plateNo;
         
         users.map((user) => {
             if(user.username === usernameEmail) {
@@ -37,17 +47,71 @@ export default function Login({navigation}) {
             users.map((user) => {
                 if(user.username === usernameEmail) {
                     email = user.email;
+
+                    accountType = user.accountType;
+                    firstName = user.firstName;
+                    lastName = user.lastName;
+                    username = user.username;
+                    province = user.province;
+                    municipality = user.municipality;
+                    barangay = user.barangay;
+                    contactNo = user.contactNo;
+                    if(user.plateNo !== undefined)
+                        plateNo = user.plateNo;
+                    else
+                        plateNo = 'N/A';
                 }
             })
         } else if(!usernameUsed) {
             email = usernameEmail;
+            users.map((user) => {
+                if(user.email === email) {
+                    accountType = user.accountType;
+                    firstName = user.firstName;
+                    lastName = user.lastName;
+                    username = user.username;
+                    province = user.province;
+                    municipality = user.municipality;
+                    barangay = user.barangay;
+                    contactNo = user.contactNo;
+                    if(user.plateNo !== undefined)
+                        plateNo = user.plateNo;
+                    else
+                        plateNo = 'N/A';
+                }
+            })
         }
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
+            await AsyncStorage.clear();
+            await AsyncStorage.setItem('userType', accountType);
+            await AsyncStorage.setItem('userFName', firstName);
+            await AsyncStorage.setItem('userLName', lastName);
+            await AsyncStorage.setItem('userUName', username);
+            await AsyncStorage.setItem('userEmail', email);
+            await AsyncStorage.setItem('userProvince', province);
+            await AsyncStorage.setItem('userMunicipality', municipality);
+            await AsyncStorage.setItem('userBarangay', barangay);
+            await AsyncStorage.setItem('userContact', contactNo);
+            await AsyncStorage.setItem('userPlateNo', plateNo);
+            
+            console.log(
+                await AsyncStorage.getItem('userType') + ", " +
+                await AsyncStorage.getItem('userFName') + ", " +
+                await AsyncStorage.getItem('userLName') + ", " +
+                await AsyncStorage.getItem('userUName') + ", " +
+                await AsyncStorage.getItem('userEmail') + ", " +
+                await AsyncStorage.getItem('userProvince') + ", " +
+                await AsyncStorage.getItem('userMunicipality') + ", " +
+                await AsyncStorage.getItem('userBarangay') + ", " +
+                await AsyncStorage.getItem('userContact') + ", and " +
+                await AsyncStorage.getItem('userPlateNo')
+            );
+
             Redirect(email);
         } catch(error) {
-            console.log(error.message);
+            alert(error.message);
         }
     }
 

@@ -25,10 +25,10 @@ export default function SignUp({ navigation }) {
                 clearForm();
                 Redirect();
             } catch (error) {
-                console.log(error.message);
+                alert(error.message);
             }
         } else {
-            console.log("Empty or Incomplete form! Unable to save data.");
+            alert("Empty or Incomplete form! Unable to save data.");
         }
     }
 

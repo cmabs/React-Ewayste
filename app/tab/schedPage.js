@@ -2,6 +2,9 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Calendar } from 'react-native-calendars';
+import { useIsFocused } from '@react-navigation/native';
+import { useState, useEffect, useRef } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import SideBar from '../../components/SideNav';
 
@@ -9,6 +12,13 @@ export default function Schedule({ navigation }) {
     const [refreshing, setRefreshing] = React.useState(false);
     const [openSideBar, setOpenSideBar] = React.useState();
     const [viewSched, setViewSched] = React.useState(ViewSchedButton());
+
+    const isFocused = useIsFocused();
+    useEffect(() => {
+        if(!isFocused) {
+            setOpenSideBar();
+        }
+    });
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);

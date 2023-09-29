@@ -1,10 +1,20 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useIsFocused } from '@react-navigation/native';
+import { useState, useEffect, useRef } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Report({ navigation }) {
     const [refreshing, setRefreshing] = React.useState(false);
     const [openSideBar, setOpenSideBar] = React.useState();
+
+    const isFocused = useIsFocused();
+    useEffect(() => {
+        if(!isFocused) {
+            setOpenSideBar();
+        }
+    });
     
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);

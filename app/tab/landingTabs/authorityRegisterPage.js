@@ -29,10 +29,10 @@ export default function Registration3({ navigation }) {
                 await AsyncStorage.flushGetRequests();
                 registerUser(accountType, firstName, lastName, username, email, password);
             } catch (error) {
-                console.log(error.message);
+                alert(error.message);
             }   
         } else {
-            console.log("Empty or Incomplete form! Unable to save data.");
+            alert("Empty or Incomplete form! Unable to save data.");
         }
     }
     
@@ -41,7 +41,7 @@ export default function Registration3({ navigation }) {
             await createUserWithEmailAndPassword(auth, email, password);
             createUser(accountType, firstName, lastName, username, email);
         } catch(error) {
-            console.log(error.message);
+            alert(error.message);
         }
     };
     
@@ -57,6 +57,16 @@ export default function Registration3({ navigation }) {
             barangay: barangay,
             contactNo: contactNo
         });
+        await AsyncStorage.clear();
+        await AsyncStorage.setItem('userType', accountType);
+        await AsyncStorage.setItem('userFName', firstName);
+        await AsyncStorage.setItem('userLName', lastName);
+        await AsyncStorage.setItem('userUName', username);
+        await AsyncStorage.setItem('userEmail', email);
+        await AsyncStorage.setItem('userProvince', province);
+        await AsyncStorage.setItem('userMunicipality', municipality);
+        await AsyncStorage.setItem('userBarangay', barangay);
+        await AsyncStorage.setItem('userContact', contactNo);
         clearForm();
         Redirect();
     };
@@ -76,7 +86,7 @@ export default function Registration3({ navigation }) {
         <ScrollView contentContainerStyle={{flexGrow:1}}>
             <View style={styles.container}>
                 <View style={{position: 'absolute',width: '100%', alignItems: 'flex-start', top: 30, left: 20}}>
-                    <TouchableOpacity onPress={() => {navigation.navigate('register')}}>
+                    <TouchableOpacity onPress={() => {clearForm(); navigation.navigate('register')}}>
                         <Ionicons name='arrow-back' style={{fontSize: 40, color: 'rgba(16, 139, 0, 1)'}} />
                     </TouchableOpacity>
                 </View>
@@ -131,7 +141,7 @@ export default function Registration3({ navigation }) {
                     </View>
                     <View style={{flexDirection: 'row', gap: 5, alignItems: 'center', marginVertical: 10}}>
                         <Text style={{fontSize: 14, fontWeight: 500}}>Already have an account?</Text>
-                        <TouchableOpacity activeOpacity={0.5} onPress={() => {navigation.navigate('login')}}>
+                        <TouchableOpacity activeOpacity={0.5} onPress={() => {clearForm(); navigation.navigate('login')}}>
                             <Text style={{color: 'rgb(0,123,0)', fontSize: 16, fontWeight: 900}}>Sign in</Text>
                         </TouchableOpacity>
                     </View>

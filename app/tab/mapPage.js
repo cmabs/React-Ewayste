@@ -1,11 +1,21 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useIsFocused } from '@react-navigation/native';
+import { useState, useEffect, useRef } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import SideBar from '../../components/SideNav';
 
 export default function Map({ navigation }) {
     const [openSideBar, setOpenSideBar] = React.useState();
+
+    const isFocused = useIsFocused();
+    useEffect(() => {
+        if(!isFocused) {
+            setOpenSideBar();
+        }
+    });
 
     function SideNavigation(navigation) {
         return (
