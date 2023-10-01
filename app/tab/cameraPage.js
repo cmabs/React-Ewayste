@@ -8,6 +8,11 @@ import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
 import { useIsFocused } from '@react-navigation/native';
 
+import { db, auth, storage } from '../../firebase_config';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { ref, uploadBytes } from 'firebase/storage';
+
 export default function CameraOpen({ navigation: {goBack} }) {
     const [hasCameraPermission, setHasCameraPermission] = useState(null);
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
@@ -33,7 +38,7 @@ export default function CameraOpen({ navigation: {goBack} }) {
             try {
                 const data = await cameraRef.current.takePictureAsync();
                 console.log(data);
-                setImage(data.uri);
+                setImage(data);
             } catch(e) {
                 console.log(e);
             }
@@ -49,8 +54,17 @@ export default function CameraOpen({ navigation: {goBack} }) {
                 quality: 1
             });
             console.log(result.assets[0]);
-            setImage(result.assets[0].uri);
+            setImage(result.assets[0]);
         } catch(e) {}
+    }
+
+    const uploadImage = () => {
+        if (image == null) return;
+        console.log(image);
+        // const imageRef = ref(storage, 'images/sample.jpeg');
+        // uploadBytes(imageRef, image).then(() => {
+        //     alert("Image Uploaded");
+        // });
     }
 
     if(hasCameraPermission === false) {
@@ -80,7 +94,7 @@ export default function CameraOpen({ navigation: {goBack} }) {
                                     <View style={{width: '100%', alignItems: 'center', paddingVertical: 10}}>
                                         <Text>GARBAGE REPORT</Text>
                                         <View style={{height: 500, width: '95%', padding: 5, backgroundColor: 'rgb(245, 245, 245)', borderRadius: 5, borderWidth: 1, borderColor: 'rgb(235, 235, 235)'}}>
-                                            <Image source={{uri: image}} style={{flex: 1, resizeMode: 'contain'}} />
+                                            <Image source={{uri: image.uri}} style={{flex: 1, resizeMode: 'contain'}} />
                                         </View>
                                         <TextInput
                                             style={{
@@ -124,7 +138,7 @@ export default function CameraOpen({ navigation: {goBack} }) {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{height:45, width: 130, backgroundColor: 'black', borderRadius: 100, overflow: 'hidden'}}>
-                                    <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.8} /*onPress={}*/>
+                                    <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.8} onPress={() => {uploadImage()}}>
                                         <View style={{width: '100%', height: '100%', backgroundColor: 'rgb(81,175,91)', justifyContent: 'center', alignItems: 'center'}}>
                                             <Text style={{fontWeight: 900, color: 'white'}}>POST</Text>
                                         </View>
