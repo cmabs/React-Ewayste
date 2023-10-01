@@ -74,15 +74,70 @@ export default function CameraOpen({ navigation: {goBack} }) {
                             ref={cameraRef}
                         />
                         :
-                        <View style={{flex: 1, borderRadius: 20, marginTop: 20}}>
-                            <Image source={{uri: image}} style={{flex: 1, resizeMode: 'contain'}} />
+                        <View style={{height: '100%', width: '100%', backgroundColor: 'white'}}>
+                            <View style={{flex: 1, marginTop: 20, alignItems: 'center'}}>
+                                <ScrollView style={{flex: 1, width: '100%'}}>
+                                    <View style={{width: '100%', alignItems: 'center', paddingVertical: 10}}>
+                                        <Text>GARBAGE REPORT</Text>
+                                        <View style={{height: 500, width: '95%', padding: 5, backgroundColor: 'rgb(245, 245, 245)', borderRadius: 5, borderWidth: 1, borderColor: 'rgb(235, 235, 235)'}}>
+                                            <Image source={{uri: image}} style={{flex: 1, resizeMode: 'contain'}} />
+                                        </View>
+                                        <TextInput
+                                            style={{
+                                                height: 40,
+                                                width: '95%',
+                                                backgroundColor: 'rgb(189,227,124)',
+                                                borderRadius: 5,
+                                                borderWidth: 0.5,
+                                                borderColor: "rgb(215,233,217)",
+                                                color: "rgba(45, 105, 35, 1)",
+                                                paddingLeft: 15,
+                                                marginVertical: 10
+                                            }}
+                                            placeholder='Add Location'
+                                        />
+                                        <TextInput
+                                            style={{
+                                                height: 150,
+                                                width: '95%',
+                                                backgroundColor: 'rgb(189,227,124)',
+                                                borderRadius: 5,
+                                                borderWidth: 0.5,
+                                                borderColor: "rgb(215,233,217)",
+                                                color: "rgba(45, 105, 35, 1)",
+                                                padding: 15,
+                                                paddingRight: 8,
+                                                textAlignVertical: 'top',
+                                            }}
+                                            placeholder='Add Description'
+                                            multiline={true}
+                                        />
+                                    </View>
+                                </ScrollView>
+                            </View>
+                            <View style={{alignItems: 'center', paddingVertical: 10, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 50, backgroundColor: 'rgba(242,190,45,0)', borderTopRightRadius: 10, borderTopLeftRadius: 10}}>
+                                <View style={{height:45, width: 130, backgroundColor: 'black', borderRadius: 100, overflow: 'hidden'}}>
+                                    <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.8} onPress={() => {setImage(null)}}>
+                                        <View style={{width: '100%', height: '100%', backgroundColor: 'rgb(81,175,91)', justifyContent: 'center', alignItems: 'center'}}>
+                                            <Text style={{fontWeight: 900, color: 'white'}}>RETAKE</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{height:45, width: 130, backgroundColor: 'black', borderRadius: 100, overflow: 'hidden'}}>
+                                    <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.8} /*onPress={}*/>
+                                        <View style={{width: '100%', height: '100%', backgroundColor: 'rgb(81,175,91)', justifyContent: 'center', alignItems: 'center'}}>
+                                            <Text style={{fontWeight: 900, color: 'white'}}>POST</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
+                        /*<View style={{flex: 1, borderRadius: 20, marginTop: 20}}>
+                            <Image source={{uri: image}} style={{flex: 1, resizeMode: 'contain'}} />
+                        </View>*/
                     }
                     {image ?
-                        <View style={{alignItems: 'center', paddingVertical: 20, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 50, marginBottom: 50}}>
-                            <Button title='RETAKE PHOTO' onPress={() => {setImage(null)}} />
-                            <Button title='SAVE PHOTO' onPress={() => {}}/>
-                        </View>
+                        <></>
                         :
                         <View style={{alignItems: 'center', paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 5, marginTop: 10}}>
                             <TouchableOpacity activeOpacity={0.9} onPress={() => {goBack();}}>
