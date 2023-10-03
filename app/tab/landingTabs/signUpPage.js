@@ -4,6 +4,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SelectList } from 'react-native-dropdown-select-list';
 
+import { db, auth } from '../../../firebase_config';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
 export default function SignUp({ navigation }) {
     const [accountType, setAccountType] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -11,9 +15,27 @@ export default function SignUp({ navigation }) {
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [users, setUsers] = useState([]);
+
+    const usersCollection = collection(db, "users");
+
+    useEffect(() => {
+        const getUsers = async () => {
+            const data = await getDocs(usersCollection);
+
+            setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        };
+        getUsers();
+    }, [])
 
     const storeData = async () => {
-        if ((firstName && lastName && userName && email && password) && (firstName.length > 0 && lastName.length > 0 && userName.length > 0 && email.length > 0 && password.length > 0)) {
+        let proceed = true;
+        users.map((user) => {
+            if(user.username.toLowerCase() === userName.toLocaleLowerCase()) {
+                proceed = false;
+            }
+        });
+        if (proceed && (firstName && lastName && userName && email && password) && (firstName.length > 0 && lastName.length > 0 && userName.length > 0 && email.length > 0 && password.length > 0)) {
             try {
                 await AsyncStorage.setItem('accountType', accountType);
                 await AsyncStorage.setItem('accountFName', firstName);
@@ -27,6 +49,8 @@ export default function SignUp({ navigation }) {
             } catch (error) {
                 alert(error.message);
             }
+        } else if (!proceed) {
+            alert("Username is already in use.");
         } else {
             alert("Empty or Incomplete form! Unable to save data.");
         }

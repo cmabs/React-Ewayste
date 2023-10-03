@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import uuid from 'react-native-uuid';
+import moment from 'moment/moment';
 
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -17,6 +19,8 @@ import { ref, uploadBytes } from 'firebase/storage';
 export default function CameraOpen({ navigation: {goBack} }) {
     const [hasCameraPermission, setHasCameraPermission] = useState(null);
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
+    const [location, setLocation] = useState(null);
+    const [description, setDescription] = useState(null);
 
     const [image, setImage] = useState(null);
     const [type, setType] = useState(CameraType.back);
@@ -84,15 +88,28 @@ export default function CameraOpen({ navigation: {goBack} }) {
 
     const uploadImage = async () => {
         const imageURI = image.uri;
-        let imageName = imageURI.substring(imageURI.lastIndexOf('/') + 1);
+        const imageName = imageURI.substring(imageURI.lastIndexOf('/') + 1);
+        const finalImageName = uuid.v1() + '||' + imageName;
         getUserId();
-        const imageDestination = 'generalUsers/' + await AsyncStorage.getItem('userEmail') + '/images/' + await AsyncStorage.getItem('userId') + '||' + imageName;
+        const imageDestination = 'generalUsers/' + await AsyncStorage.getItem('userId') + '/images/' + finalImageName;
         
         const response = await fetch(imageURI);
         const blob = await response.blob();
         const imageRef = ref(storage, imageDestination);
         uploadBytes(imageRef, blob).then(() => {
             alert("Image Uploaded");
+        });
+
+        const fullDateTime = moment()
+            .utcOffset('+05:30')
+            .format('YYYY/MM/DD hh:mm:ss a');
+
+        const genUserUploadCol = collection(db, 'generalUsersReports')
+        await addDoc(genUserUploadCol, {
+            associatedImage: finalImageName,
+            location: location,
+            description: description,
+            dateTime: fullDateTime
         });
 
         setImage(null);
@@ -141,6 +158,7 @@ export default function CameraOpen({ navigation: {goBack} }) {
                                                 marginVertical: 10
                                             }}
                                             placeholder='Add Location'
+                                            onChangeText={(e) => {setLocation(e)}}
                                         />
                                         <TextInput
                                             style={{
@@ -157,6 +175,7 @@ export default function CameraOpen({ navigation: {goBack} }) {
                                             }}
                                             placeholder='Add Description'
                                             multiline={true}
+                                            onChangeText={(e) => {setDescription(e)}}
                                         />
                                     </View>
                                 </ScrollView>
