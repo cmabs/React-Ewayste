@@ -67,6 +67,7 @@ export default function Registration1({ navigation }) {
         await AsyncStorage.setItem('userMunicipality', municipality);
         await AsyncStorage.setItem('userBarangay', barangay);
         await AsyncStorage.setItem('userContact', contactNo);
+        await AsyncStorage.setItem('userPlateNo', 'N/A');
         clearForm();
         Redirect();
     };

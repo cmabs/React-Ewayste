@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -21,6 +22,29 @@ export default function CameraOpen({ navigation: {goBack} }) {
     const [type, setType] = useState(CameraType.back);
     const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
     const cameraRef = useRef(null);
+    const [users, setUsers] = useState([]);
+
+    const usersCollection = collection(db, "users");
+
+    useEffect(() => {
+        const getUsers = async () => {
+            const data = await getDocs(usersCollection);
+
+            setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        };
+        getUsers();
+    }, [])
+
+    const getUserId = async () => {
+        const email = await AsyncStorage.getItem('userEmail');
+        let id;
+        users.map((user) => {
+            if(user.email === email) {
+                id = user.id;
+            }
+        });
+        await AsyncStorage.setItem('userId', id);
+    };
 
     useEffect(() => {
         (async () => {
@@ -58,13 +82,21 @@ export default function CameraOpen({ navigation: {goBack} }) {
         } catch(e) {}
     }
 
-    const uploadImage = () => {
-        if (image == null) return;
-        console.log(image);
-        // const imageRef = ref(storage, 'images/sample.jpeg');
-        // uploadBytes(imageRef, image).then(() => {
-        //     alert("Image Uploaded");
-        // });
+    const uploadImage = async () => {
+        const imageURI = image.uri;
+        let imageName = imageURI.substring(imageURI.lastIndexOf('/') + 1);
+        getUserId();
+        const imageDestination = 'generalUsers/' + await AsyncStorage.getItem('userEmail') + '/images/' + await AsyncStorage.getItem('userId') + '||' + imageName;
+        
+        const response = await fetch(imageURI);
+        const blob = await response.blob();
+        const imageRef = ref(storage, imageDestination);
+        uploadBytes(imageRef, blob).then(() => {
+            alert("Image Uploaded");
+        });
+
+        setImage(null);
+        goBack();
     }
 
     if(hasCameraPermission === false) {

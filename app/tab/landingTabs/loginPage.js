@@ -27,6 +27,7 @@ export default function Login({navigation}) {
         let email;
         let usernameUsed = false;
 
+        let accountId;
         let accountType;
         let firstName;
         let lastName;
@@ -48,6 +49,7 @@ export default function Login({navigation}) {
                 if(user.username === usernameEmail) {
                     email = user.email;
 
+                    accountId = user.id;
                     accountType = user.accountType;
                     firstName = user.firstName;
                     lastName = user.lastName;
@@ -66,6 +68,7 @@ export default function Login({navigation}) {
             email = usernameEmail;
             users.map((user) => {
                 if(user.email === email) {
+                    accountId = user.id;
                     accountType = user.accountType;
                     firstName = user.firstName;
                     lastName = user.lastName;
@@ -85,6 +88,7 @@ export default function Login({navigation}) {
         try {
             await signInWithEmailAndPassword(auth, email, password);
             await AsyncStorage.clear();
+            await AsyncStorage.setItem('userId', accountId);
             await AsyncStorage.setItem('userType', accountType);
             await AsyncStorage.setItem('userFName', firstName);
             await AsyncStorage.setItem('userLName', lastName);
@@ -97,6 +101,7 @@ export default function Login({navigation}) {
             await AsyncStorage.setItem('userPlateNo', plateNo);
             
             console.log(
+                await AsyncStorage.getItem('userId') + ", " +
                 await AsyncStorage.getItem('userType') + ", " +
                 await AsyncStorage.getItem('userFName') + ", " +
                 await AsyncStorage.getItem('userLName') + ", " +
