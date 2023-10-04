@@ -26,29 +26,6 @@ export default function CameraOpen({ navigation: {goBack} }) {
     const [type, setType] = useState(CameraType.back);
     const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
     const cameraRef = useRef(null);
-    const [users, setUsers] = useState([]);
-
-    const usersCollection = collection(db, "users");
-
-    useEffect(() => {
-        const getUsers = async () => {
-            const data = await getDocs(usersCollection);
-
-            setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        };
-        getUsers();
-    }, [])
-
-    const getUserId = async () => {
-        const email = await AsyncStorage.getItem('userEmail');
-        let id;
-        users.map((user) => {
-            if(user.email === email) {
-                id = user.id;
-            }
-        });
-        await AsyncStorage.setItem('userId', id);
-    };
 
     useEffect(() => {
         (async () => {
@@ -90,7 +67,6 @@ export default function CameraOpen({ navigation: {goBack} }) {
         const imageURI = image.uri;
         const imageName = imageURI.substring(imageURI.lastIndexOf('/') + 1);
         const finalImageName = uuid.v1() + '||' + imageName;
-        getUserId();
         const imageDestination = 'generalUsers/' + await AsyncStorage.getItem('userId') + '/images/' + finalImageName;
         
         const response = await fetch(imageURI);
@@ -197,9 +173,6 @@ export default function CameraOpen({ navigation: {goBack} }) {
                                 </View>
                             </View>
                         </View>
-                        /*<View style={{flex: 1, borderRadius: 20, marginTop: 20}}>
-                            <Image source={{uri: image}} style={{flex: 1, resizeMode: 'contain'}} />
-                        </View>*/
                     }
                     {image ?
                         <></>

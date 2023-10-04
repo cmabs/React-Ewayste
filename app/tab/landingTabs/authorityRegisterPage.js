@@ -26,7 +26,7 @@ export default function Registration3({ navigation }) {
                 const username = await AsyncStorage.getItem('accountUName');
                 const email = await AsyncStorage.getItem('accountEmail');
                 const password = await AsyncStorage.getItem('accountPass');
-                await AsyncStorage.flushGetRequests();
+                AsyncStorage.flushGetRequests();
                 registerUser(accountType, firstName, lastName, username, email, password);
             } catch (error) {
                 alert(error.message);
@@ -46,7 +46,7 @@ export default function Registration3({ navigation }) {
     };
     
     const createUser = async (accountType, firstName, lastName, username, email) => {
-        await addDoc(usersCollection, {
+        const account = await addDoc(usersCollection, {
             accountType: accountType,
             firstName: firstName,
             lastName: lastName,
@@ -58,6 +58,7 @@ export default function Registration3({ navigation }) {
             contactNo: contactNo
         });
         await AsyncStorage.clear();
+        await AsyncStorage.setItem('userId', account.id);
         await AsyncStorage.setItem('userType', accountType);
         await AsyncStorage.setItem('userFName', firstName);
         await AsyncStorage.setItem('userLName', lastName);
