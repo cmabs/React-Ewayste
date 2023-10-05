@@ -85,7 +85,8 @@ export default function CameraOpen({ navigation: {goBack} }) {
             associatedImage: finalImageName,
             location: location,
             description: description,
-            dateTime: fullDateTime
+            dateTime: fullDateTime,
+            status: 'uncollected'
         });
 
         setImage(null);
