@@ -2,16 +2,70 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { db, auth } from '../../firebase_config';
+import { collection, addDoc, getDocs, doc, onSnapshot } from 'firebase/firestore';
 
 import SideBar from '../../components/SideNav';
 
 export default function Report({ navigation }) {
+    const isFocused = useIsFocused();
     const [refreshing, setRefreshing] = React.useState(false);
     const [openSideBar, setOpenSideBar] = React.useState();
+    const [users, setUsers] = useState([]);
+    const [userUpload, setUserUpload] = useState([]);
+    let uploadCollection = [];
+    let ctr = 3;
 
-    const isFocused = useIsFocused();
+    const userUploadCol = collection(db, "generalUsersReports");
+    const usersCollection = collection(db, "users");
+
+    useEffect(() => {
+        if(isFocused) {
+            setTimeout(async () => {
+                const data = await getDocs(userUploadCol);
+                setUserUpload(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            }, 5000);
+        }
+    })
+
+    useEffect(() => {
+        const getUsers = async () => {
+            const data = await getDocs(usersCollection);
+            setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        };
+        getUsers();
+    }, [])
+
+    const getUsers = async () => {
+        const data = await getDocs(userUploadCol);
+        setUserUpload(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+
+    const setObjectsToSort = useCallback(() => {
+        if(isFocused) {
+            userUpload.map((uploads) => {
+                var valueToPush = { };
+                valueToPush["id"] = uploads.id;
+                valueToPush["imageLink"] = uploads.associatedImage;
+                valueToPush["dateTime"] = uploads.dateTime;
+                valueToPush["description"] = uploads.description;
+                valueToPush["location"] = uploads.location;
+                valueToPush["status"] = uploads.status;
+                valueToPush["userId"] = uploads.userId;
+                uploadCollection.push(valueToPush);
+                uploadCollection.sort((a, b) => {
+                    let fa = a.dateTime, fb = b.dateTime;
+                    if (fa < fb) {return -1;}
+                    if (fa > fb) {return 1;}
+                    return 0;
+                });
+            })
+        }
+    })
+
     useEffect(() => {
         if(!isFocused) {
             setOpenSideBar();
@@ -41,7 +95,7 @@ export default function Report({ navigation }) {
 
     function BodyContent() {
         let temp = [];
-        for (let i = 0; i < 10; i++) {
+        uploadCollection.map((post) => {
             temp.push(
                 <View style={[styles.contentButton, styles.contentGap]}>
                     <TouchableOpacity activeOpacity={0.5}>
@@ -50,10 +104,10 @@ export default function Report({ navigation }) {
                                 <View style={styles.containerPfp}>
                                     <Ionicons name='person-outline' style={styles.placeholderPfp} />
                                 </View>
-                                <Text style={{fontSize: 16, fontWeight: 500, color: 'rgba(113, 112, 108, 1)'}}>Username</Text>
+                                <Text style={{fontSize: 16, fontWeight: 500, color: 'rgba(113, 112, 108, 1)'}}>{users.map((user) => {if(post.userId === user.id) {return user.username;}})}</Text>
                             </View>
                             <SafeAreaView style={{width: '100%', marginVertical: 10, paddingHorizontal: 22, paddingBottom: 5, borderBottomWidth: 1, borderColor: 'rgba(190, 190, 190, 1)'}}>
-                                <Text style={{fontSize: 13, marginBottom: 5,}}>Banilad, Cebu City</Text>
+                                <Text style={{fontSize: 13, marginBottom: 5,}}>{post.location}</Text>
                                 <View style={{ width: '100%', height: 200, backgroundColor: '#D6D6D8', marginVertical: 5, justifyContent: 'center', alignItems: 'center' }}>
                                     <Ionicons name='images-outline' style={{fontSize: 100, color: 'white'}} />
                                 </View>
@@ -67,6 +121,9 @@ export default function Report({ navigation }) {
                     </TouchableOpacity>
                 </View>
             );
+        })
+        for (let i = 0; i < uploadCollection.length; i++) {
+            
         }
         
         <ul>
@@ -107,7 +164,7 @@ export default function Report({ navigation }) {
                     </Text>
                     <View style={{ marginTop: 50 }}>
                         <Text style={{fontSize: 20, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 5}}>Banilad, Cebu City</Text>
-                        {BodyContent ()}
+                        {setObjectsToSort()}{BodyContent()}
                     </View>
                 </SafeAreaView>
             </ScrollView>

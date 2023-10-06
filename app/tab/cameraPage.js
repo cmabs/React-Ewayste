@@ -80,13 +80,16 @@ export default function CameraOpen({ navigation: {goBack} }) {
             .utcOffset('+05:30')
             .format('YYYY/MM/DD hh:mm:ss a');
 
+        const userID = await AsyncStorage.getItem('userId');
+
         const genUserUploadCol = collection(db, 'generalUsersReports')
         await addDoc(genUserUploadCol, {
             associatedImage: finalImageName,
             location: location,
             description: description,
             dateTime: fullDateTime,
-            status: 'uncollected'
+            status: 'uncollected',
+            userId: userID
         });
 
         setImage(null);
