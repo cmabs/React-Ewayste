@@ -67,7 +67,7 @@ export default function CameraOpen({ navigation: {goBack} }) {
         const imageURI = image.uri;
         const imageName = imageURI.substring(imageURI.lastIndexOf('/') + 1);
         const finalImageName = uuid.v1() + '||' + imageName;
-        const imageDestination = 'generalUsers/' + await AsyncStorage.getItem('userId') + '/images/' + finalImageName;
+        const imageDestination = 'postImages/' + finalImageName;
         
         const response = await fetch(imageURI);
         const blob = await response.blob();

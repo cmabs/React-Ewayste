@@ -2,11 +2,12 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { db, auth } from '../../firebase_config';
-import { collection, addDoc, getDocs, doc, onSnapshot } from 'firebase/firestore';
+import { db, auth, storage, firebase } from '../../firebase_config';
+import { collection, addDoc, getDocs, query } from 'firebase/firestore';
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
 
 import SideBar from '../../components/SideNav';
 
@@ -15,21 +16,19 @@ export default function Report({ navigation }) {
     const [refreshing, setRefreshing] = React.useState(false);
     const [openSideBar, setOpenSideBar] = React.useState();
     const [users, setUsers] = useState([]);
-    const [userUpload, setUserUpload] = useState([]);
+    const [userUploads, setUserUploads] = useState([]);
+    const [imageCol, setImageCol] = useState([]);
     let uploadCollection = [];
-    let ctr = 3;
 
-    const userUploadCol = collection(db, "generalUsersReports");
     const usersCollection = collection(db, "users");
+    const reportRef = firebase.firestore().collection("generalUsersReports");
+    const imageColRef = ref(storage, "postImages/");
 
     useEffect(() => {
-        if(isFocused) {
-            setTimeout(async () => {
-                const data = await getDocs(userUploadCol);
-                setUserUpload(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            }, 5000);
+        if(!isFocused) {
+            setOpenSideBar();
         }
-    })
+    });
 
     useEffect(() => {
         const getUsers = async () => {
@@ -39,38 +38,36 @@ export default function Report({ navigation }) {
         getUsers();
     }, [])
 
-    const getUsers = async () => {
-        const data = await getDocs(userUploadCol);
-        setUserUpload(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
-
-    const setObjectsToSort = useCallback(() => {
-        if(isFocused) {
-            userUpload.map((uploads) => {
-                var valueToPush = { };
-                valueToPush["id"] = uploads.id;
-                valueToPush["imageLink"] = uploads.associatedImage;
-                valueToPush["dateTime"] = uploads.dateTime;
-                valueToPush["description"] = uploads.description;
-                valueToPush["location"] = uploads.location;
-                valueToPush["status"] = uploads.status;
-                valueToPush["userId"] = uploads.userId;
-                uploadCollection.push(valueToPush);
-                uploadCollection.sort((a, b) => {
-                    let fa = a.dateTime, fb = b.dateTime;
-                    if (fa < fb) {return -1;}
-                    if (fa > fb) {return 1;}
-                    return 0;
-                });
-            })
-        }
-    })
+    useEffect(() => {
+        reportRef.onSnapshot(
+            querySnapshot => {
+                const uploads = []
+                querySnapshot.forEach((doc) => {
+                    const {associatedImage, dateTime, description, location, status, userId} = doc.data();
+                    uploads.push({
+                        id: doc.id,
+                        associatedImage,
+                        dateTime,
+                        description,
+                        location,
+                        status,
+                        userId
+                    })
+                })
+                setUserUploads(uploads)
+            }
+        )
+    }, [])
 
     useEffect(() => {
-        if(!isFocused) {
-            setOpenSideBar();
-        }
-    });
+        listAll(imageColRef).then((response) => {
+            response.items.forEach((item) => {
+                getDownloadURL(item).then((url) => {
+                    setImageCol((prev) => [...prev, url])
+                })
+            })
+        })
+    }, [])
     
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -94,6 +91,26 @@ export default function Report({ navigation }) {
     }
 
     function BodyContent() {
+        userUploads.map((uploads) => {
+            var valueToPush = { };
+            valueToPush["id"] = uploads.id;
+            valueToPush["imageLink"] = uploads.associatedImage;
+            valueToPush["dateTime"] = uploads.dateTime;
+            valueToPush["description"] = uploads.description;
+            valueToPush["location"] = uploads.location;
+            valueToPush["status"] = uploads.status;
+            valueToPush["userId"] = uploads.userId;
+            uploadCollection.push(valueToPush);
+            uploadCollection.sort((a, b) => {
+                let fa = a.dateTime, fb = b.dateTime;
+                if (fa < fb) {return -1;}
+                if (fa > fb) {return 1;}
+                return 0;
+            });
+        })
+
+        console.log(imageCol.length);
+
         let temp = [];
         uploadCollection.map((post) => {
             temp.push(
@@ -121,10 +138,7 @@ export default function Report({ navigation }) {
                     </TouchableOpacity>
                 </View>
             );
-        })
-        for (let i = 0; i < uploadCollection.length; i++) {
-            
-        }
+        });
         
         <ul>
             {temp.map(item =>
@@ -164,7 +178,7 @@ export default function Report({ navigation }) {
                     </Text>
                     <View style={{ marginTop: 50 }}>
                         <Text style={{fontSize: 20, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 5}}>Banilad, Cebu City</Text>
-                        {setObjectsToSort()}{BodyContent()}
+                        {BodyContent ()}
                     </View>
                 </SafeAreaView>
             </ScrollView>
