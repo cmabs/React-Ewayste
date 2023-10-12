@@ -66,7 +66,7 @@ export default function CameraOpen({ navigation: {goBack} }) {
     const uploadImage = async () => {
         const imageURI = image.uri;
         const imageName = imageURI.substring(imageURI.lastIndexOf('/') + 1);
-        const finalImageName = uuid.v1() + '||' + imageName;
+        const finalImageName = uuid.v1() + imageName;
         const imageDestination = 'postImages/' + finalImageName;
         
         const response = await fetch(imageURI);

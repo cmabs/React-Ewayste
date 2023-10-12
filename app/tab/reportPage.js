@@ -36,9 +36,7 @@ export default function Report({ navigation }) {
             setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         };
         getUsers();
-    }, [])
 
-    useEffect(() => {
         reportRef.onSnapshot(
             querySnapshot => {
                 const uploads = []
@@ -55,18 +53,17 @@ export default function Report({ navigation }) {
                     })
                 })
                 setUserUploads(uploads)
+                
+                listAll(imageColRef).then((response) => {
+                    setImageCol([]);
+                    response.items.forEach((item) => {
+                        getDownloadURL(item).then((url) => {
+                            setImageCol((prev) => [...prev, url])
+                        })
+                    })
+                })
             }
         )
-    }, [])
-
-    useEffect(() => {
-        listAll(imageColRef).then((response) => {
-            response.items.forEach((item) => {
-                getDownloadURL(item).then((url) => {
-                    setImageCol((prev) => [...prev, url])
-                })
-            })
-        })
     }, [])
     
     const onRefresh = React.useCallback(() => {
@@ -109,10 +106,15 @@ export default function Report({ navigation }) {
             });
         })
 
-        console.log(imageCol.length);
-
         let temp = [];
         uploadCollection.map((post) => {
+            let imageURL;
+            imageCol.map((url) => {
+                if(url.includes(post.imageLink)) {
+                    imageURL = url;
+                }
+            })
+
             temp.push(
                 <View style={[styles.contentButton, styles.contentGap]}>
                     <TouchableOpacity activeOpacity={0.5}>
@@ -125,8 +127,9 @@ export default function Report({ navigation }) {
                             </View>
                             <SafeAreaView style={{width: '100%', marginVertical: 10, paddingHorizontal: 22, paddingBottom: 5, borderBottomWidth: 1, borderColor: 'rgba(190, 190, 190, 1)'}}>
                                 <Text style={{fontSize: 13, marginBottom: 5,}}>{post.location}</Text>
-                                <View style={{ width: '100%', height: 200, backgroundColor: '#D6D6D8', marginVertical: 5, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Ionicons name='images-outline' style={{fontSize: 100, color: 'white'}} />
+                                <View style={{ width: '100%', height: 250, backgroundColor: '#D6D6D8', marginVertical: 5, justifyContent: 'center', alignItems: 'center' }}>
+                                    {/* <Ionicons name='images-outline' style={{fontSize: 100, color: 'white'}} /> */}
+                                    <Image src={imageURL} style={{width: '100%', height: '100%', flex: 1, resizeMode: 'cover'}} />
                                 </View>
                             </SafeAreaView>
                             <View style={{width: '90%', flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 10}}>
