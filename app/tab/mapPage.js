@@ -6,17 +6,70 @@ import { useState, useEffect, useRef } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MapView from 'react-native-maps';
 
+import { db, auth, storage, firebase } from '../../firebase_config';
+import { collection, addDoc, getDocs, query } from 'firebase/firestore';
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
+
 import SideBar from '../../components/SideNav';
+import { Marker } from 'react-native-maps';
 
 export default function Map({ navigation }) {
-    const [openSideBar, setOpenSideBar] = React.useState();
-
     const isFocused = useIsFocused();
+    const [openSideBar, setOpenSideBar] = React.useState();
+    const [users, setUsers] = useState([]);
+    const [userUploads, setUserUploads] = useState([]);
+    const [imageCol, setImageCol] = useState([]);
+
+    const usersCollection = collection(db, "users");
+    const reportRef = firebase.firestore().collection("generalUsersReports");
+    const imageColRef = ref(storage, "postImages/");
+    const [state, setState] = useState({ coordinates: [
+        { name: 'Sample 1', latitude: 10.3156992, longitude: 123.88543660000005 },
+        { name: 'Sample 2', latitude: 10.4031, longitude: 123.9965 }
+    ] });
+
     useEffect(() => {
         if(!isFocused) {
             setOpenSideBar();
         }
     });
+
+    useEffect(() => {
+        const getUsers = async () => {
+            const data = await getDocs(usersCollection);
+            setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        };
+        getUsers();
+
+        reportRef.onSnapshot(
+            querySnapshot => {
+                const uploads = []
+                querySnapshot.forEach((doc) => {
+                    const {associatedImage, dateTime, description, location, status, userId, longitude, latitude} = doc.data();
+                    uploads.push({
+                        id: doc.id,
+                        associatedImage,
+                        dateTime,
+                        description,
+                        location,
+                        status,
+                        userId,
+                        longitude,
+                        latitude
+                    })
+                })
+                setUserUploads(uploads)
+            }
+        )
+
+        const addPin = () => {
+            setState({
+              ...state,
+              coordinates: [...state.coordinates, { name: 'Sample 3', latitude: 37.4226711, longitude: -122.0849872 }],
+            });
+        };
+        addPin();
+    }, [])
 
     function SideNavigation(navigation) {
         return (
@@ -70,7 +123,19 @@ export default function Map({ navigation }) {
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}
-                />
+                >
+                    {state.coordinates.map(marker => (
+                        <Marker
+                            key={marker.name}
+                            coordinate={{
+                                latitude: marker.latitude,
+                                longitude: marker.longitude
+                            }}
+                            title={'Hello'}
+                            description={'This is the description'}
+                        />
+                    ))}
+                </MapView>
             </View>
         </>
     );
