@@ -5,11 +5,59 @@ import { Calendar } from 'react-native-calendars';
 import { useIsFocused } from '@react-navigation/native';
 import { useState, useEffect, useRef } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { db, firebase } from '../../../firebase_config';
+import { collection, addDoc, getDocs,where, query} from 'firebase/firestore';
+//import 'firebase/database'; 
 
 export default function ScheduleAut({navigation}) {
     const [refreshing, setRefreshing] = React.useState(false);
     const [openSideBar, setOpenSideBar] = React.useState();
-    const [viewSched, setViewSched] = React.useState(ViewSchedButton());
+    const [viewSched, setViewSched] = useState(false);
+
+    const [schedule, setSchedule] = useState([]);
+    const [selectedDate, setSelectedDate] = useState('');
+
+    const [reportsToday, setReportsToday] = useState(0);
+    const [totalReports, setTotalReports] = useState(0);
+    
+    useEffect(() => {
+      const currentDate = new Date().toISOString().split('T')[0]; // Get the current date
+  
+      const fetchReports = async () => {
+        try {
+          // Query for reports today
+          const todayQuery = query(collection(db, 'generalUsersReports'), where('dateTime', '==', currentDate));
+          const todaySnapshot = await getDocs(todayQuery);
+          const reportsTodayCount = todaySnapshot.size;
+          setReportsToday(reportsTodayCount);
+  
+          // Query for all reports
+          const allReportsQuery = query(collection(db, 'generalUsersReports'));
+          const allReportsSnapshot = await getDocs(allReportsQuery);
+          const totalReportsCount = allReportsSnapshot.size;
+          setTotalReports(totalReportsCount);
+        } catch (error) {
+          console.log('Error fetching reports:', error);
+        }
+      };
+  
+      fetchReports();
+    }, []);
+  
+  
+    useEffect(() => {
+        const fetchSchedule = async () => {
+          try {
+            const querySnapshot = await getDocs(collection(db, 'schedule'));
+            const scheduleData = querySnapshot.docs.map((doc) => doc.data());
+            setSchedule(scheduleData);
+          } catch (error) {
+            console.log('Error fetching schedule:', error);
+          }
+        };
+      
+        fetchSchedule();
+      }, []);
 
     const isFocused = useIsFocused();
     useEffect(() => {
@@ -24,6 +72,24 @@ export default function ScheduleAut({navigation}) {
             setRefreshing(false);
         }, 1000);
     }, []);
+    
+    function getMarkedDates(scheduleData) {
+        return scheduleData.reduce((markedDates, item) => {
+          let color = '';
+          if (item.type === 'Collection') {
+            color = 'rgb(255, 203, 60)';
+          } else if (item.type === 'Event') {
+            color = 'rgb(72, 229, 239)';
+          } else if (item.type === 'Assignment') {
+            color = 'rgb(135, 255, 116)';
+          }
+          markedDates[item.selectedDate] = {
+            selected: true,
+            selectedColor: color,
+          };
+          return markedDates;
+        }, {});
+    }
 
     function SideBar(navigation) {
         return (
@@ -39,7 +105,7 @@ export default function ScheduleAut({navigation}) {
                                 style={{width: 180, height: 161, marginBottom: 10}}
                             />
                             <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
-                                <TouchableOpacity activeOpacity={0.5} onPress={() => { setOpenSideBar(); navigation.navigate('profile') }}>
+                                <TouchableOpacity activeOpacity={0.5} onPress={() => {setOpenSideBar(); navigation.navigate('profile') }}>
                                     <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
                                         <Text>User Profile</Text>
                                     </View>
@@ -67,117 +133,55 @@ export default function ScheduleAut({navigation}) {
         );
     }
 
-    function ViewSchedButton() {
+    function ViewSchedButton(scheduleData) {
         return (
-            <>
-                <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}>
-                    <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
-                        <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(ViewSchedExtend()); }}>
-                            <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
-                                <Text>View all Events</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </>
+          <>
+            <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}>
+              <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
+                <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(true); }}>
+                  <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
+                    <Text>View all Events</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
         );
-    }
-
-    function ViewSchedExtend() {
+      }
+      
+      function ViewSchedExtend(scheduleData) {
         return (
-            <>
-                <View style={{ width: 315, marginTop: 20, gap: 10 }}>
-                    <View style={{width: '100%', borderWidth: 0.5}} />
-                    <Text style={{fontWeight: 800}}>Week 1</Text>
-                    <View style={{width: '100%', flexDirection: 'row'}}>
-                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{fontSize: 40, fontWeight: 800}}>02</Text>
-                        </View>
-                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
-                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
-                            <Text>9:00 am</Text>
-                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
-                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={{width: '100%', flexDirection: 'row'}}>
-                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{fontSize: 40, fontWeight: 800}}>06</Text>
-                        </View>
-                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
-                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
-                            <Text>10:00 am</Text>
-                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
-                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <Text style={{ fontWeight: 800 }}>Week 2</Text>
-                    <View style={{width: '100%', flexDirection: 'row'}}>
-                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{fontSize: 40, fontWeight: 800}}>12</Text>
-                        </View>
-                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
-                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
-                            <Text>09:00 am</Text>
-                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
-                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <Text style={{ fontWeight: 800 }}>Week 3</Text>
-                    <View style={{width: '100%', flexDirection: 'row'}}>
-                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{fontSize: 40, fontWeight: 800}}>17</Text>
-                        </View>
-                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
-                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
-                            <Text>10:00 am</Text>
-                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
-                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <Text style={{ fontWeight: 800 }}>Week 4</Text>
-                    <View style={{width: '100%', flexDirection: 'row'}}>
-                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(225,203,60)', justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{fontSize: 40, fontWeight: 800}}>25</Text>
-                        </View>
-                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(225,248,172)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
-                            <Text style={{fontSize: 18, fontWeight: 800}}>Garbage Collection</Text>
-                            <Text>09:00 am</Text>
-                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
-                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={{width: '100%', flexDirection: 'row'}}>
-                        <View style={{width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgb(134,231,237)', justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{fontSize: 40, fontWeight: 800}}>27</Text>
-                        </View>
-                        <View style={{position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: 'rgb(171,247,221)', right: 0, justifyContent: 'center', paddingHorizontal: 15}}>
-                            <Text style={{fontSize: 18, fontWeight: 800}}>Special Event</Text>
-                            <Text>10:00 am</Text>
-                            <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
-                                <Ionicons name='ellipsis-horizontal' style={{fontSize: 20}} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+          <>
+            <View style={{ width: 315, marginTop: 20, gap: 10 }}>
+              <View style={{ width: '100%', borderWidth: 0.5 }} />
+              {scheduleData.map((event, index) => (
+                <View key={index} style={{ width: '100%', flexDirection: 'row' }}>
+                  <View style={{ width: 80, height: 80, borderRadius: 30, backgroundColor: event.backgroundColor, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 40, fontWeight: 800 }}>{event.selectedDate.substring(8, 10)}</Text>
+                  </View>
+                  <View style={{ position: 'absolute', width: 225, height: 80, borderRadius: 10, backgroundColor: event.backgroundColor, right: 0, justifyContent: 'center', paddingHorizontal: 15 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 800 }}>{event.type}</Text>
+                    <Text>{event.startTime}</Text>
+                    <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}>
+                      <Ionicons name='ellipsis-horizontal' style={{ fontSize: 20 }} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}>
-                    <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
-                        <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(ViewSchedButton()); }}>
-                            <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
-                                <Text>Show less</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </>
+              ))}
+            </View>
+            <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}>
+              <View style={{ width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5 }}>
+                <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(false); }}>
+                  <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)' }}>
+                    <Text>Show less</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
         );
-    }
-
+      }
+    
     function HeaderContent() {
         return (
             <>
@@ -186,14 +190,14 @@ export default function ScheduleAut({navigation}) {
                     <View style={{alignItems: 'center'}}>
                         <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>REPORTS TODAY</Text>
                         <View style={styles.headerCntr}>
-                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>12</Text>
+                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>{reportsToday}</Text>
                             <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
                         </View>
                     </View>
                     <View style={{alignItems: 'center'}}>
                         <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>TOTAL REPORT</Text>
                         <View style={styles.headerCntr}>
-                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>38</Text>
+                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>{totalReports}</Text>
                             <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
                         </View>
                     </View>
@@ -238,32 +242,33 @@ export default function ScheduleAut({navigation}) {
                         {HeaderContent()}
                     </View>
                     <SafeAreaView style={styles.body}>
-                        <View style={{alignItems: 'center'}}>
-                            <Text style={{fontSize: 23, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 10}}>SCHEDULE</Text>
-                        </View>
-                        <View>
-                            <Calendar style={{ width: 315, borderRadius: 10, borderWidth: 0.5, borderColor: 'rgb(16, 139, 0)', paddingBottom: 15 }}
-                                markedDates={{
-                                    '2023-08-02': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                    '2023-08-06': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                    '2023-08-12': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                    '2023-08-17': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                    '2023-08-25': { selected: true, selectedColor: 'rgb(242, 190, 45)' },
-                                    '2023-08-27': { selected: true, selectedColor: 'rgb(134, 231, 237)' }
-                                }}
-                            />
-                        </View>
-                        <View style={{width: 315, marginTop: 10, gap: 5}}>
-                            <View style={{ flexDirection: 'row', gap: 10 }}>
-                                <View style={{ width: 20, height: 20, backgroundColor: 'rgb(242, 190, 45)' }} />
-                                <Text>Schedule for Collection</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', gap: 10 }}>
-                                <View style={{ width: 20, height: 20, backgroundColor: 'rgb(134, 231, 237)' }} />
-                                <Text>Special Events</Text>
-                            </View>
-                        </View>
-                        {viewSched}
+                    <View style={styles.body}>
+  <View style={{alignItems: 'center'}}>
+    <Text style={{fontSize: 23, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 10, marginTop:-50}}>SCHEDULE</Text>
+  </View>
+  <View>
+  <Calendar 
+    style={{ width: 320, backgroundColor: 'white', borderRadius: 10, paddingBottom: 15, shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2,}, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5,}}
+        markedDates={getMarkedDates(schedule)}
+        />
+    </View>
+        <View style={{width: 315, marginTop: 10, gap: 5}}>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+            <View style={{ width: 20, height: 20, backgroundColor: 'rgb(242, 190, 45)' }} />
+            <Text>Schedule for Collection</Text>
+            </View>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+            <View style={{ width: 20, height: 20, backgroundColor: 'rgb(72, 229, 239)' }} />
+            <Text>Special Events</Text>
+            </View>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+            <View style={{ width: 20, height: 20, backgroundColor: 'rgb(135, 255, 116)'}} />
+            <Text>Assignment</Text>
+            </View>
+        </View>
+         {viewSched ? ViewSchedExtend(schedule) : ViewSchedButton(schedule)}
+        </View>
                     </SafeAreaView>
                 </SafeAreaView>
             </ScrollView>
