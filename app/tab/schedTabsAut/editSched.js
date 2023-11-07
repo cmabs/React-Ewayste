@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Calendar } from 'react-native-calendars';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { db } from '../../../firebase_config';
+import { updateDoc, doc } from 'firebase/firestore';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 
 
@@ -104,49 +105,52 @@ export default function ChangeSched({navigation}) {
         { key: "PM", value: "PM" },
     ];
 
-    const createSchedule = async () => {
+    const handleDelete = async (scheduleId) => {
+        try {
+          await deleteDoc(doc(db, 'schedule', scheduleId));
+          // Handle any additional logic after successful deletion
+        } catch (error) {
+          console.log('Error deleting schedule:', error);
+          // Handle error case
+        }
+      };
+
+      const updateSchedule = async () => {
         let newHourStart, newTitle;
-      
         if (hourStart < 10) {
           newHourStart = "0" + hourStart;
         } else {
           newHourStart = hourStart;
         }
-
         let start = newHourStart + ":" + minStart + " " + ampmStart;
-
         // Default title if not provided
         if (title !== "") {
           newTitle = title;
         } else {
           newTitle = "N/A";
         }
-      
         let id = await AsyncStorage.getItem('userId');
-      
         // Validate necessary values
         if (
-            (location !== "" || assignLocation !== "") && setAssignCollector !== "" && description !== "" && selectedDate) {
-            await addDoc(schedCollection, {
-              type: selectType,
-              description: description,
-              location: location,
-              startTime: start,
-              title: newTitle,
-              userID: id,
-              assignLocation: assignLocation,
-              assignCollector: assignCollector, // Include assignCollector
-              selectedDate: selectedDate,
-            });
-            alert("Schedule successfully added!")
-            setMarkedDates((prevMarkedDates) => ({
-                ...prevMarkedDates,
-                [selectedDate]: { selected: true, selectedColor: getTypeColor(selectType) },
-            }));
+          (location !== "" || assignLocation !== "") && setAssignCollector !== "" && description !== "" && selectedDate
+        ) {
+          await updateDoc(doc(db, 'schedule', scheduleId), {
+            type: selectType,
+            description: description,
+            location: location,
+            startTime: start,
+            title: newTitle,
+            userID: id,
+            assignLocation: assignLocation,
+            assignCollector: assignCollector,
+            selectedDate: selectedDate,
+          });
+          alert("Schedule successfully updated!");
+          navigation.navigate('mainSched'); // Navigate to the mainSched screen after updating
         } else {
-            alert("Fill up necessary values");
+          alert("Fill up necessary values");
         }
-    };
+      };
 
     const getTypeColor = (type) => {
         switch (type) {
@@ -190,7 +194,7 @@ export default function ChangeSched({navigation}) {
                 <Text style={{marginLeft: 30, fontSize: 16, marginTop: 20}}>Select Date</Text>
                 <View style={{width: "100%", justifyContent: "center" , alignItems:"center", marginTop: 10}}>
                 <Calendar
-                    style={{ width: 330, backgroundColor: 'white', borderRadius: 10, paddingBottom: 15, shadowColor: '#000',
+                    style={{ width: 320, backgroundColor: 'white', borderRadius: 10, paddingBottom: 15, shadowColor: '#000',
                     shadowOffset: { width: 0, height: 2,}, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5,}}
                     markedDates={markedDates}
                     onDayPress={(day) => setSelectedDate(day.dateString)} // Capture selected date
@@ -479,10 +483,13 @@ export default function ChangeSched({navigation}) {
 
     return (
         <>
-            <View style={{ position: "absolute", height: "100%", width: "100%", justifyContent: "flex-start", alignItems: "center", zIndex: 10, backgroundColor: "rgba(0, 0, 0, 0.85)", }}>
-                <View style={{ position: "absolute", width: "100%", alignItems: "flex-start", top: 30, left: 20, zIndex: 10, }}>
+            <View style={{ position: "absolute", height: "100%", width: "100%", justifyContent: "flex-start", alignItems: "center", zIndex: 10, backgroundColor: "rgba(0, 0, 0, 0.85)" }}>
+                <View style={{ position: "absolute", width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", top: 30, paddingHorizontal: 20, zIndex: 10 }}>
                     <TouchableOpacity onPress={() => { navigation.navigate('mainSched'); }}>
-                        <Ionicons name="arrow-back" style={{ fontSize: 40, color: "rgb(179,229,94)" }} />
+                    <Ionicons name="arrow-back" style={{ fontSize: 40, color: "rgb(179, 229, 94)" }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleDelete(scheduleId)}>
+                    <Ionicons name="trash-outline" style={{ fontSize: 30, color: "red" }} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ width: "100%", height: "100%", backgroundColor: "#ffffff" }}>
@@ -494,7 +501,7 @@ export default function ChangeSched({navigation}) {
                                 data={Type}
                                 placeholder="Select Type"
                                 boxStyles={{
-                                    width: 360,
+                                    width: 310,
                                     backgroundColor: "rgb(189,228,124)",
                                     borderRadius: 10,
                                     color: "rgba(45, 105, 35, 1)",
@@ -502,7 +509,7 @@ export default function ChangeSched({navigation}) {
                                     borderWidth: 0,
                                 }}
                                 dropdownStyles={{
-                                    width: 360,
+                                    width: 310,
                                     backgroundColor: "rgb(231,247,233)",
                                     top: -10,
                                     marginBottom: -10,
@@ -517,8 +524,8 @@ export default function ChangeSched({navigation}) {
                         {DisplayType()}
                         <View style={{width: '100%', marginTop: 30, marginBottom: 90, alignItems: 'center'}}>
                             <View style={styles.button}>
-                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={()=>{createSchedule()}}>
-                                    <Text style={styles.buttonTxt}>Save</Text>
+                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={()=>{updateSchedule()}}>
+                                    <Text style={styles.buttonTxt}>Update</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
+import { StyleSheet, View, Text, TextInput, navigate, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Calendar } from 'react-native-calendars';
 import { SelectList } from 'react-native-dropdown-select-list';
@@ -128,7 +128,7 @@ export default function AddSched({navigation}) {
           (location !== "" || assignLocation !== "") && setAssignCollector !== "" && description !== "" && selectedDate
         ) {
           await addDoc(schedCollection, {
-            scheduleID: scheduleID, // Include scheduleID
+            scheduleID: scheduleID, 
             type: selectType,
             description: description,
             location: location,
@@ -144,6 +144,17 @@ export default function AddSched({navigation}) {
             ...prevMarkedDates,
             [selectedDate]: { selected: true, selectedColor: getTypeColor(selectType) },
           }));
+            setSelectType(null);
+            setDescription("");
+            setLocation("");
+            setTitle("");
+            setAssignLocation("");
+            setAssignCollector("");
+            setSelectedDate(null);
+            setHourStart(null);
+            setMinStart(null);
+            setAmpmStart(null);
+            navigation.navigate('mainSched'); //CANT NAVIGATE
         } else {
           alert("Fill up necessary values");
         }
@@ -191,7 +202,7 @@ export default function AddSched({navigation}) {
                 <Text style={{marginLeft: 30, fontSize: 16, marginTop: 20}}>Select Date</Text>
                 <View style={{width: "100%", justifyContent: "center" , alignItems:"center", marginTop: 10}}>
                 <Calendar
-                    style={{ width: 350, backgroundColor: 'white', borderRadius: 10, paddingBottom: 15, shadowColor: '#000',
+                    style={{ width: 320, backgroundColor: 'white', borderRadius: 10, paddingBottom: 15, shadowColor: '#000',
                     shadowOffset: { width: 0, height: 2,}, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5,}}
                     markedDates={markedDates}
                     onDayPress={(day) => setSelectedDate(day.dateString)} // Capture selected date
@@ -495,7 +506,7 @@ export default function AddSched({navigation}) {
                                 data={Type}
                                 placeholder="Select Type"
                                 boxStyles={{
-                                    width: 360,
+                                    width: 310,
                                     backgroundColor: "rgb(189,228,124)",
                                     borderRadius: 10,
                                     color: "rgba(45, 105, 35, 1)",
@@ -503,7 +514,7 @@ export default function AddSched({navigation}) {
                                     borderWidth: 0,
                                 }}
                                 dropdownStyles={{
-                                    width: 360,
+                                    width: 310,
                                     backgroundColor: "rgb(231,247,233)",
                                     top: -10,
                                     marginBottom: -10,
@@ -518,7 +529,7 @@ export default function AddSched({navigation}) {
                         {DisplayType()}
                         <View style={{width: '100%', marginTop: 30, marginBottom: 90, alignItems: 'center'}}>
                             <View style={styles.button}>
-                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={()=>{createSchedule()}}>
+                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={()=>{createSchedule();}}>
                                     <Text style={styles.buttonTxt}>Save</Text>
                                 </TouchableOpacity>
                             </View>
