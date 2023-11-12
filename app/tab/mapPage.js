@@ -46,20 +46,6 @@ export default function Map({ navigation }) {
                     })
                 })
                 setUserUploads(uploads)
-                
-                setState({ coordinates: [] });
-                userUploads.map((pin) => {
-                    try {
-                        const lat = parseFloat(pin.latitude);
-                        const long = parseFloat(pin.longitude);
-                        setState((prevState) => ({
-                            ...prevState,
-                            coordinates: [...prevState.coordinates, { name: pin.id, latitude: lat, longitude: long, image: pin.associatedImage }],
-                        }));
-                    } catch (e) {
-                        console.log(e);
-                    }
-                })
 
                 listAll(imageColRef).then((response) => {
                     setImageCol([]);
@@ -68,6 +54,26 @@ export default function Map({ navigation }) {
                             setImageCol((prev) => [...prev, url])
                         })
                     })
+                })
+                
+                setState({ coordinates: [] });
+                userUploads.map((pin) => {
+                    let imageURL;
+                    imageCol.map((url) => {
+                        if(url.includes(pin.associatedImage)) {
+                            imageURL = url;
+                        }
+                    })
+                    try {
+                        const lat = parseFloat(pin.latitude);
+                        const long = parseFloat(pin.longitude);
+                        setState((prevState) => ({
+                            ...prevState,
+                            coordinates: [...prevState.coordinates, { name: pin.id, latitude: lat, longitude: long, image: imageURL }],
+                        }));
+                    } catch (e) {
+                        console.log(e);
+                    }
                 })
             }
         )
@@ -92,20 +98,6 @@ export default function Map({ navigation }) {
                     })
                 })
                 setUserUploads(uploads)
-                
-                setState({ coordinates: [] });
-                userUploads.map((pin) => {
-                    try {
-                        const lat = parseFloat(pin.latitude);
-                        const long = parseFloat(pin.longitude);
-                        setState((prevState) => ({
-                            ...prevState,
-                            coordinates: [...prevState.coordinates, { name: pin.id, latitude: lat, longitude: long, image: pin.associatedImage }],
-                        }));
-                    } catch (e) {
-                        console.log(e);
-                    }
-                })
 
                 listAll(imageColRef).then((response) => {
                     setImageCol([]);
@@ -114,6 +106,26 @@ export default function Map({ navigation }) {
                             setImageCol((prev) => [...prev, url])
                         })
                     })
+                })
+                
+                setState({ coordinates: [] });
+                userUploads.map((pin) => {
+                    let imageURL;
+                    imageCol.map((url) => {
+                        if(url.includes(pin.associatedImage)) {
+                            imageURL = url;
+                        }
+                    })
+                    try {
+                        const lat = parseFloat(pin.latitude);
+                        const long = parseFloat(pin.longitude);
+                        setState((prevState) => ({
+                            ...prevState,
+                            coordinates: [...prevState.coordinates, { name: pin.id, latitude: lat, longitude: long, image: imageURL }],
+                        }));
+                    } catch (e) {
+                        console.log(e);
+                    }
                 })
             }
         )
@@ -254,12 +266,13 @@ export default function Map({ navigation }) {
                                     latitude: parseFloat(marker.latitude),
                                     longitude: parseFloat(marker.longitude)
                                 }}
+                                onCalloutPress={() => {console.log('Callout Pressed')}}
                             >
                                 <Ionicons name='location' style={{fontSize: 30, color: '#F76811'}} />
                                 <Callout>
-                                    <View style={{width: 70, height: 70}}>
-                                        <Text style={{position: 'absolute', top: -30, paddingBottom: 60}}>
-                                            <Image style={{width: 70, height: 70}} source={{uri: 'https://i.pinimg.com/736x/16/19/c0/1619c0340badb411cdbbb16e27da82c5.jpg'}} />
+                                    <View style={{width: 80, height: 80}}>
+                                        <Text style={{position: 'absolute', top: -35, paddingBottom: 40}}>
+                                            <Image style={{width: 80, height: 80}} source={{uri: marker.image}} />
                                         </Text>
                                     </View>
                                 </Callout>
@@ -271,5 +284,3 @@ export default function Map({ navigation }) {
         </>
     );
 }
-
-// source={require('../../assets/SampleMap2.png')}
