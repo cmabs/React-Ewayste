@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import { useState, useEffect, useRef } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from 'expo-location';
 
 import { db, auth, storage, firebase } from '../../firebase_config';
 import { collection, addDoc, getDocs, query } from 'firebase/firestore';
@@ -26,6 +27,9 @@ export default function Map({ navigation }) {
 
     const reportRef = firebase.firestore().collection("generalUsersReports");
     const imageColRef = ref(storage, "postImages/");
+
+    const [currentLat, setCurrentLat] = useState(null);
+    const [currentLon, setCurrentLon] = useState(null);
 
     useEffect(() => {
         reportRef.onSnapshot(
@@ -129,16 +133,6 @@ export default function Map({ navigation }) {
                 })
             }
         )
-
-
-        console.log(".......................................Reload.......................................")
-        state.coordinates.map((pin) => {
-            console.log(pin.name);
-            console.log(pin.latitude);
-            console.log(pin.longitude);
-            console.log(pin.image);
-            console.log("----------------------");
-        })
     }
 
     const moveCameraTo = (latitude, longitude) => {
@@ -170,6 +164,19 @@ export default function Map({ navigation }) {
                 </View>
             </>
         );
+    }
+
+    const quickRoute = () => {
+        (async() => {
+            let {status} = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+                return;
+            }
+            let currentLocation = await Location.getCurrentPositionAsync({});
+            setCurrentLat(currentLocation.coords.latitude);
+            setCurrentLon(currentLocation.coords.longitude);
+        })();
     }
 
     return (
@@ -266,7 +273,8 @@ export default function Map({ navigation }) {
                                     latitude: parseFloat(marker.latitude),
                                     longitude: parseFloat(marker.longitude)
                                 }}
-                                onCalloutPress={() => {console.log('Callout Pressed')}}
+                                title='My Location'
+                                onCalloutPress={() => {quickRoute();}}
                             >
                                 <Ionicons name='location' style={{fontSize: 30, color: '#F76811'}} />
                                 <Callout>
@@ -278,6 +286,20 @@ export default function Map({ navigation }) {
                                 </Callout>
                             </Marker>
                         ))}
+
+                        {currentLat !== null && currentLon !== null ? 
+                            <Marker
+                                key={"My Location"}
+                                coordinate={{
+                                    latitude: parseFloat(currentLat),
+                                    longitude: parseFloat(currentLon)
+                                }}
+                            >
+                                <Ionicons name='location' style={{fontSize: 35, color: '#3F7307'}} />
+                            </Marker>
+                            :
+                            <></>
+                        }
                     </MapView>
                 </View>
             </View>
