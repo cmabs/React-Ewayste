@@ -4,16 +4,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import { useState, useEffect, useRef } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// Start Here
+
 import { db, auth, storage, firebase } from '../../firebase_config';
 import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 import { ref, listAll, getDownloadURL } from 'firebase/storage';
 
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_API_KEY } from '../../environments';
 import SideBar from '../../components/SideNav';
-import { Marker } from 'react-native-maps';
 
 export default function Map({ navigation }) {
     const isFocused = useIsFocused();
@@ -22,9 +21,11 @@ export default function Map({ navigation }) {
     let searchLongitude, searchLatitude;
 
     const [userUploads, setUserUploads] = useState([]);
+    const [imageCol, setImageCol] = useState([]);
     const [state, setState] = useState({ coordinates: [] });
 
     const reportRef = firebase.firestore().collection("generalUsersReports");
+    const imageColRef = ref(storage, "postImages/");
 
     useEffect(() => {
         reportRef.onSnapshot(
@@ -45,6 +46,7 @@ export default function Map({ navigation }) {
                     })
                 })
                 setUserUploads(uploads)
+                
                 setState({ coordinates: [] });
                 userUploads.map((pin) => {
                     try {
@@ -52,21 +54,80 @@ export default function Map({ navigation }) {
                         const long = parseFloat(pin.longitude);
                         setState((prevState) => ({
                             ...prevState,
-                            coordinates: [...prevState.coordinates, { name: pin.id, latitude: lat, longitude: long }],
+                            coordinates: [...prevState.coordinates, { name: pin.id, latitude: lat, longitude: long, image: pin.associatedImage }],
                         }));
                     } catch (e) {
                         console.log(e);
                     }
                 })
+
+                listAll(imageColRef).then((response) => {
+                    setImageCol([]);
+                    response.items.forEach((item) => {
+                        getDownloadURL(item).then((url) => {
+                            setImageCol((prev) => [...prev, url])
+                        })
+                    })
+                })
             }
         )
-    }, [])
+    },[]);
+    
+    const reload = async () => {
+        reportRef.onSnapshot(
+            querySnapshot => {
+                const uploads = []
+                querySnapshot.forEach((doc) => {
+                    const {associatedImage, dateTime, description, location, status, userId, longitude, latitude} = doc.data();
+                    uploads.push({
+                        id: doc.id,
+                        associatedImage,
+                        dateTime,
+                        description,
+                        location,
+                        status,
+                        userId,
+                        longitude,
+                        latitude
+                    })
+                })
+                setUserUploads(uploads)
+                
+                setState({ coordinates: [] });
+                userUploads.map((pin) => {
+                    try {
+                        const lat = parseFloat(pin.latitude);
+                        const long = parseFloat(pin.longitude);
+                        setState((prevState) => ({
+                            ...prevState,
+                            coordinates: [...prevState.coordinates, { name: pin.id, latitude: lat, longitude: long, image: pin.associatedImage }],
+                        }));
+                    } catch (e) {
+                        console.log(e);
+                    }
+                })
+
+                listAll(imageColRef).then((response) => {
+                    setImageCol([]);
+                    response.items.forEach((item) => {
+                        getDownloadURL(item).then((url) => {
+                            setImageCol((prev) => [...prev, url])
+                        })
+                    })
+                })
+            }
+        )
 
 
-
-
-
-
+        console.log(".......................................Reload.......................................")
+        state.coordinates.map((pin) => {
+            console.log(pin.name);
+            console.log(pin.latitude);
+            console.log(pin.longitude);
+            console.log(pin.image);
+            console.log("----------------------");
+        })
+    }
 
     const moveCameraTo = (latitude, longitude) => {
         const region = {
@@ -148,6 +209,9 @@ export default function Map({ navigation }) {
                     />
                 </View>
             </View>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => {reload()}} style={{position: 'absolute', height: 40, width: 40, backgroundColor: 'orange', top: 90, right: 15, zIndex: 99, justifyContent: 'center', alignItems: 'center', borderRadius: 100, shadowColor: 'black', shadowOffset:{width: 3, height: 3}, shadowOpacity: 0.5, shadowRadius: 4, elevation: 4,}}>
+                        <Ionicons name='refresh-circle' style={{ fontSize: 30, top: 0, left: 1, color: 'white' }} />
+            </TouchableOpacity>
             {/* <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 0.5, borderColor: 'rgb(0,0,0)', overflow: 'hidden' }}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
@@ -190,9 +254,16 @@ export default function Map({ navigation }) {
                                     latitude: parseFloat(marker.latitude),
                                     longitude: parseFloat(marker.longitude)
                                 }}
-                                title={'Hello'}
-                                description={'This is the description'}
-                            />
+                            >
+                                <Ionicons name='location' style={{fontSize: 30, color: '#F76811'}} />
+                                <Callout>
+                                    <View style={{width: 70, height: 70}}>
+                                        <Text style={{position: 'absolute', top: -30, paddingBottom: 60}}>
+                                            <Image style={{width: 70, height: 70}} source={{uri: 'https://i.pinimg.com/736x/16/19/c0/1619c0340badb411cdbbb16e27da82c5.jpg'}} />
+                                        </Text>
+                                    </View>
+                                </Callout>
+                            </Marker>
                         ))}
                     </MapView>
                 </View>
@@ -200,3 +271,5 @@ export default function Map({ navigation }) {
         </>
     );
 }
+
+// source={require('../../assets/SampleMap2.png')}
