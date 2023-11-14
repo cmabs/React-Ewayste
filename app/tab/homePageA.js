@@ -90,96 +90,149 @@ export default function NewsfeedAut({navigation}) {
 
     function BodyContent() {
         userUploads.map((uploads) => {
-            var valueToPush = { };
-            valueToPush["id"] = uploads.id;
-            valueToPush["imageLink"] = uploads.associatedImage;
-            valueToPush["dateTime"] = uploads.dateTime;
-            valueToPush["description"] = uploads.description;
-            valueToPush["location"] = uploads.location;
-            valueToPush["status"] = uploads.status;
-            valueToPush["userId"] = uploads.userId;
-            uploadCollection.push(valueToPush);
-            uploadCollection.sort((a, b) => {
-                let fa = a.dateTime, fb = b.dateTime;
-                if (fa < fb) {return -1;}
-                if (fa > fb) {return 1;}
-                return 0;
-            });
-        })
-
-        let temp = [];
-        uploadCollection.map((post) => {
-            let imageURL;
-            imageCol.map((url) => {
-                if(url.includes(post.imageLink)) {
-                    imageURL = url;
-                }
-            })
-
-            temp.push(
-                <View style={[styles.contentButton, styles.contentGap]}>
-                    <TouchableOpacity activeOpacity={0.5}>
-                        <View style={styles.contentButtonFront}>
-                            <View style={{width: '93%', flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 15}}>
-                                <View style={styles.containerPfp}>
-                                    <Ionicons name='person-outline' style={styles.placeholderPfp} />
-                                </View>
-                                <Text style={{fontSize: 16, fontWeight: 500, color: 'rgba(113, 112, 108, 1)'}}>{users.map((user) => {if(post.userId === user.id) {return user.username;}})}</Text>
-                            </View>
-                            <SafeAreaView style={{width: '100%', marginVertical: 10, paddingHorizontal: 22, paddingBottom: 5, borderBottomWidth: 1, borderColor: 'rgba(190, 190, 190, 1)'}}>
-                                <Text style={{fontSize: 13, marginBottom: 5,}}>{post.description}</Text>
-                                <View style={{ width: '100%', height: 250, backgroundColor: '#D6D6D8', marginVertical: 5, justifyContent: 'center', alignItems: 'center' }}>
-                                    {/* <Ionicons name='images-outline' style={{fontSize: 100, color: 'white'}} /> */}
-                                    <Image src={imageURL} style={{width: '100%', height: '100%', flex: 1, resizeMode: 'cover'}} />
-                                </View>
-                            </SafeAreaView>
-                            <View style={{width: '90%', flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 10}}>
-                                <Ionicons name='heart-outline' style={{ fontSize: 25 }} />
-                                <Ionicons name='chatbubble-outline' style={{ fontSize: 25 }} />
-                                <Ionicons name='share-outline' style={{fontSize: 25}} />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            );
+          var valueToPush = {};
+          valueToPush["id"] = uploads.id;
+          valueToPush["imageLink"] = uploads.associatedImage;
+          valueToPush["dateTime"] = uploads.dateTime;
+          valueToPush["description"] = uploads.description;
+          valueToPush["location"] = uploads.location;
+          valueToPush["status"] = uploads.status;
+          valueToPush["userId"] = uploads.userId;
+          uploadCollection.push(valueToPush);
+          uploadCollection.sort((a, b) => {
+            let fa = a.dateTime,
+              fb = b.dateTime;
+            if (fa < fb) {
+              return -1;
+            }
+            if (fa > fb) {
+              return 1;
+            }
+            return 0;
+          });
         });
-        
-        <ul>
-            {temp.map(item =>
-                <li key="{item}">{item}</li>
-            )}
-        </ul>
-
-        return (
-            <View style={{gap: 10}}>
-                {temp}
-            </View>
-        );
-    }
-
-    function HeaderContent() {
-        return (
-            <>
-                <Text style={{fontSize: 18, fontWeight: 700, color:'rgb(55,55,55)'}}>BANILAD, CEBU CITY</Text>
-                <View style={{flexDirection: 'row', gap: 7, top: 5}}>
-                    <View style={{alignItems: 'center'}}>
-                        <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>REPORTS TODAY</Text>
-                        <View style={styles.headerCntr}>
-                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>12</Text>
-                            <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
-                        </View>
+      
+        let temp = uploadCollection.map((post) => {
+          let imageURL;
+          imageCol.map((url) => {
+            if (url.includes(post.imageLink)) {
+              imageURL = url;
+            }
+          });
+      
+          return (
+            <View style={[styles.contentButton, styles.contentGap]} key={post.id}>
+              <TouchableOpacity activeOpacity={0.5}>
+                <View style={styles.contentButtonFront}>
+                  <View
+                    style={{
+                      width: '93%',
+                      flexDirection: 'row',
+                      gap: 10,
+                      alignItems: 'center',
+                      marginTop: 15,
+                    }}
+                  >
+                    <View style={styles.containerPfp}>
+                      <Ionicons name="person-outline" style={styles.placeholderPfp} />
                     </View>
-                    <View style={{alignItems: 'center'}}>
-                        <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>TOTAL REPORT</Text>
-                        <View style={styles.headerCntr}>
-                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>38</Text>
-                            <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
-                        </View>
+                    <View style={{ flex: 1 }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: 500,
+                          color: 'rgba(113, 112, 108, 1)',
+                        }}
+                      >
+                        {users.map((user) => {
+                          if (post.userId === user.id) {
+                            return user.username;
+                          }
+                        })}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: '500',
+                          color: 'rgba(113, 112, 108, 1)',
+                          alignSelf: 'flex-end', 
+                        }}
+                      >
+                        {post.dateTime} {/* Display the timestamp */}
+                      </Text>
                     </View>
+                  </View>
+                  <SafeAreaView
+                    style={{
+                      width: '100%',
+                      marginVertical: 10,
+                      paddingHorizontal: 22,
+                      paddingBottom: 5,
+                      borderBottomWidth: 1,
+                      borderColor: 'rgba(190, 190, 190, 1)',
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, marginBottom: 5 }}>{post.description}</Text>
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 250,
+                        backgroundColor: '#D6D6D8',
+                        marginVertical: 5,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Image
+                        source={{ uri: imageURL }}
+                        style={{ width: '100%', height: '100%', flex: 1, resizeMode: 'cover' }}
+                      />
+                    </View>
+                  </SafeAreaView>
+                  <View style={{
+                      width: '90%',
+                      flexDirection: 'row',
+                      gap: 10,
+                      alignItems: 'center',
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Ionicons name="heart-outline" style={{ fontSize: 25 }} />
+                    <Ionicons name="chatbubble-outline" style={{ fontSize: 25 }} />
+                    <Ionicons name="share-outline" style={{ fontSize: 25 }} />
+                  </View>
                 </View>
-            </>
+              </TouchableOpacity>
+            </View>
+          );
+        });
+      
+        return <View style={{ gap: 10 }}>{temp}</View>;
+      }
+
+      function HeaderContent() {
+        return (
+          <>
+            <Text style={[styles.container1, { marginBottom: 5}]}>BANILAD, CEBU CITY</Text>
+            <View style={styles.headerContainer}>
+              <View style={styles.headerContentContainer}>
+                <Text style={styles.headerText}>REPORTS TODAY</Text>
+                <View style={styles.headerCntr}>
+                  <Text style={styles.headerContent}>12</Text>
+                  <Text style={styles.headerContentText}>Garbages</Text>
+                </View>
+              </View>
+              <View style={styles.headerContentContainer}>
+                <Text style={styles.headerText}>TOTAL REPORT</Text>
+                <View style={styles.headerCntr}>
+                  <Text style={styles.headerContent}>38</Text>
+                  <Text style={styles.headerContentText}>Garbages</Text>
+                </View>
+              </View>
+            </View>
+          </>
         );
-    }
+      }
 
     return (
         <>
@@ -211,13 +264,13 @@ export default function NewsfeedAut({navigation}) {
                     </View>
                     <SafeAreaView style={styles.body}>
                         <View style={{alignItems: 'center'}}>
-                            <Text style={{fontSize: 23, fontWeight: 700, color: 'rgba(113, 112, 108, 1)', marginBottom: 10}}>NEWS FEED</Text>
+                            <Text style={{fontSize: 23, fontWeight: 700, color: 'rgba(3, 73, 4, 1)', marginBottom: 5}}>NEWSFEED</Text>
                         </View>
                         <View style={{width: 315, backgroundColor: 'rgb(230, 230, 230)', borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: 'rgb(16, 139, 0)', marginBottom: 20}}>
                             <TouchableOpacity activeOpacity={0.5}>
                                 <View style={{backgroundColor: '#ffffff', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 15, alignItems: 'center'}}>
-                                    <View style={[styles.containerPfp, {width: 45, height: 45}]}>
-                                        <Ionicons name='person-outline' style={[styles.placeholderPfp, {fontSize: 35}]} />
+                                    <View style={[styles.containerPfp, {width: 30, height: 30}]}>
+                                        <Ionicons name='person-outline' style={[styles.placeholderPfp, {fontSize: 20}]} />
                                     </View>
                                     <Text style={{left: 15}}>
                                         What's on your mind?
@@ -232,29 +285,29 @@ export default function NewsfeedAut({navigation}) {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        <View style={{width: '100%', paddingHorizontal: 10, flexDirection: 'row', gap: 10, marginBottom: 15}}>
-                            <View style={{width: 70, height: 35, backgroundColor: 'rgb(179, 229, 94)', borderRadius: 20, overflow: 'hidden', shadowColor: "#000", shadowOffset: {width: 0, height: 3,}, shadowOpacity: 0.27, elevation: 3}}>
+                        <View style={styles.btnMainContainer}>
+                            <View style={[styles.buttonContainer]}>
                                 <TouchableOpacity activeOpacity={0.5}>
-                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-                                        <Text style={{fontWeight: 700, fontSize: 15, color: 'rgb(113, 112, 108)'}}>All</Text>
-                                    </View>
+                                <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
+                                    <Text style={styles.buttonText}>All</Text>
+                                </View>
                                 </TouchableOpacity>
                             </View>
-                            <View style={{width: 90, height: 35, backgroundColor: 'rgb(179, 229, 94)', borderRadius: 20, overflow: 'hidden', shadowColor: "#000", shadowOffset: {width: 0, height: 3,}, shadowOpacity: 0.27, elevation: 3}}>
+                            <View style={[styles.buttonContainer]}>
                                 <TouchableOpacity activeOpacity={0.5}>
-                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-                                        <Text style={{fontWeight: 700, fontSize: 15, color: 'rgb(113, 112, 108)'}}>Reports</Text>
-                                    </View>
+                                <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
+                                    <Text style={styles.buttonText}>Reports</Text>
+                                </View>
                                 </TouchableOpacity>
                             </View>
-                            <View style={{width: 90, height: 35, backgroundColor: 'rgb(179, 229, 94)', borderRadius: 20, overflow: 'hidden', shadowColor: "#000", shadowOffset: {width: 0, height: 3,}, shadowOpacity: 0.27, elevation: 3}}>
+                            <View style={[styles.buttonContainer]}>
                                 <TouchableOpacity activeOpacity={0.5}>
-                                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff'}}>
-                                        <Text style={{fontWeight: 700, fontSize: 15, color: 'rgb(113, 112, 108)'}}>Events</Text>
-                                    </View>
+                                <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
+                                    <Text style={styles.buttonText}>Events</Text>
+                                </View>
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                            </View>
                         {BodyContent()}
                     </SafeAreaView>
                 </SafeAreaView>
@@ -271,7 +324,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgb(246, 242, 239)',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        paddingBottom: 60,
+        paddingBottom: 40,
     },
     header1: {
         width: '100%',
@@ -363,4 +416,57 @@ const styles = StyleSheet.create({
         fontSize: 25,
         color: 'rgba(113, 112, 108, 1)',
     },
-})
+
+    container1: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: 'rgb(55,55,55)',
+      },
+      headerContainer: {
+        flexDirection: 'row',
+        gap: 7,
+        top: 5,
+      },
+      headerText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: 'rgb(55,55,55)',
+        marginBottom: 5,
+      },
+      headerContentContainer: {
+        alignItems: 'center',
+      },
+      headerContent: {
+        fontSize: 40,
+        fontWeight: '700',
+        color: 'rgb(55,55,55)',
+      },
+      headerContentText: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: 'rgb(55,55,55)',
+      },
+      buttonContainer: {
+        width: 70,
+        height: 35,
+        backgroundColor: 'rgb(179, 229, 94)',
+        borderRadius: 20,
+        overflow: 'hidden',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.27,
+        elevation: 3,
+      },
+      buttonText: {
+        fontWeight: '700',
+        fontSize: 15,
+        color: 'rgb(113, 112, 108)',
+      },
+      btnMainContainer: {
+        width: '100%',
+        paddingHorizontal: 10,
+        flexDirection: 'row',
+        gap: 10,
+        marginBottom: 10, marginTop: -10
+      },
+});

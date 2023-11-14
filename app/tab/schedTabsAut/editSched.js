@@ -5,8 +5,8 @@ import { Calendar } from 'react-native-calendars';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { db } from '../../../firebase_config';
 import { updateDoc, doc } from 'firebase/firestore';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
-
+import { collection, addDoc, getDocs, onSnapshot, deleteDoc } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ChangeSched({navigation}) {
 
@@ -26,6 +26,7 @@ export default function ChangeSched({navigation}) {
     const [assignCollector, setAssignCollector]= useState("")
     const [selectedDate, setSelectedDate] = useState(null);
     const [markedDates, setMarkedDates] = useState({});
+    const [scheduleId, setScheduleId] = useState("");
 
     const Type = [
         { key: "Collection", value: "Collection" },
@@ -108,14 +109,14 @@ export default function ChangeSched({navigation}) {
     const handleDelete = async (scheduleId) => {
         try {
           await deleteDoc(doc(db, 'schedule', scheduleId));
-          // Handle any additional logic after successful deletion
+          alert("Schedule successfully deleted!");
+          navigation.navigate('mainSched');
         } catch (error) {
           console.log('Error deleting schedule:', error);
-          // Handle error case
         }
-      };
+    };
 
-      const updateSchedule = async () => {
+    const updateSchedule = async () => {
         let newHourStart, newTitle;
         if (hourStart < 10) {
           newHourStart = "0" + hourStart;
@@ -132,7 +133,7 @@ export default function ChangeSched({navigation}) {
         let id = await AsyncStorage.getItem('userId');
         // Validate necessary values
         if (
-          (location !== "" || assignLocation !== "") && setAssignCollector !== "" && description !== "" && selectedDate
+          (location !== "" || assignLocation !== "") && assignCollector !== "" && description !== "" && selectedDate
         ) {
           await updateDoc(doc(db, 'schedule', scheduleId), {
             type: selectType,
@@ -146,7 +147,7 @@ export default function ChangeSched({navigation}) {
             selectedDate: selectedDate,
           });
           alert("Schedule successfully updated!");
-          navigation.navigate('mainSched'); // Navigate to the mainSched screen after updating
+          navigation.navigate('mainSched');
         } else {
           alert("Fill up necessary values");
         }
