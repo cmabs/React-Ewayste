@@ -295,7 +295,8 @@ export default function Map({ navigation }) {
                                     longitude: parseFloat(currentLon)
                                 }}
                             >
-                                <Ionicons name='location' style={{fontSize: 35, color: '#3F7307'}} />
+                                <Ionicons name='location' style={{fontSize: 35, color: '#D31111'}} />
+                                <Ionicons name='location' style={{fontSize: 40, color: '#FFFFFF', zIndex: -1, position: 'absolute', transform: [{translateX: -2.5}, {translateY: -2.5}]}} />
                             </Marker>
                             :
                             <></>
