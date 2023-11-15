@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { db, auth, storage, firebase } from '../../firebase_config';
-import { collection, addDoc, getDocs, query } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query ,where} from 'firebase/firestore';
 import { ref, listAll, getDownloadURL } from 'firebase/storage';
 
 import SideBar from '../../components/SideNav';
@@ -24,6 +24,34 @@ export default function NewsfeedAut({navigation}) {
     const usersCollection = collection(db, "users");
     const reportRef = firebase.firestore().collection("generalUsersReports");
     const imageColRef = ref(storage, "postImages/");
+
+    const [reportsToday, setReportsToday] = useState(0);
+    const [totalReports, setTotalReports] = useState(0);
+
+    useEffect(() => {
+        const currentDate = new Date().toISOString().split('T')[0]; // Get the current date
+    
+        const fetchReports = async () => {
+          try {
+            // Query for reports today
+            const todayQuery = query(collection(db, 'generalUsersReports'), where('dateTime', '==', currentDate));
+            const todaySnapshot = await getDocs(todayQuery);
+            const reportsTodayCount = todaySnapshot.size;
+            setReportsToday(reportsTodayCount);
+    
+            // Query for all reports
+            const allReportsQuery = query(collection(db, 'generalUsersReports'));
+            const allReportsSnapshot = await getDocs(allReportsQuery);
+            const totalReportsCount = allReportsSnapshot.size;
+            setTotalReports(totalReportsCount);
+          } catch (error) {
+            console.log('Error fetching reports:', error);
+          }
+        };
+    
+        fetchReports();
+    }, []);
+
 
     useEffect(() => {
         if(!isFocused) {
@@ -212,14 +240,23 @@ export default function NewsfeedAut({navigation}) {
 
       function HeaderContent() {
         return (
-          <>
-            <Text style={[styles.container1, { marginBottom: 5}]}>BANILAD, CEBU CITY</Text>
-            <View style={styles.headerContainer}>
-              <View style={styles.headerContentContainer}>
-                <Text style={styles.headerText}>REPORTS TODAY</Text>
-                <View style={styles.headerCntr}>
-                  <Text style={styles.headerContent}>12</Text>
-                  <Text style={styles.headerContentText}>Garbages</Text>
+            <>
+                <Text style={{fontSize: 18, fontWeight: 700, color:'rgb(55,55,55)'}}>BANILAD, CEBU CITY</Text>
+                <View style={{flexDirection: 'row', gap: 7, top: 5}}>
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>REPORTS TODAY</Text>
+                        <View style={styles.headerCntr}>
+                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>{reportsToday}</Text>
+                            <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
+                        </View>
+                    </View>
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={{fontSize: 14, fontWeight: 500, color:'rgb(55,55,55)', marginBottom: 5}}>TOTAL REPORT</Text>
+                        <View style={styles.headerCntr}>
+                            <Text style={{fontSize: 40, fontWeight: 700, color:'rgb(55,55,55)'}}>{totalReports}</Text>
+                            <Text style={{fontSize: 14, fontWeight: 700, color:'rgb(55,55,55)'}}>Garbages</Text>
+                        </View>
+                    </View>
                 </View>
               </View>
               <View style={styles.headerContentContainer}>

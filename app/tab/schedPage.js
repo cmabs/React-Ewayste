@@ -15,6 +15,14 @@ export default function ScheduleAut({navigation}) {
 
   const [schedule, setSchedule] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
+  const currentDate = getCurrentDate();
+
+  function getCurrentDate() {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const currentDate = new Date().toLocaleDateString(undefined, options);
+  
+    return currentDate;
+  }
 
   useEffect(() => {
     const currentDate = new Date().toISOString().split('T')[0]; // Get the current date
@@ -82,6 +90,13 @@ export default function ScheduleAut({navigation}) {
           }
           return markedDates;
       }, {});
+
+      function getCurrentDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const currentDate = new Date().toLocaleDateString(undefined, options);
+      
+        return currentDate;
+      }
   }
     function SideNavigation(navigation) { 
         return ( 
@@ -206,7 +221,16 @@ export default function ScheduleAut({navigation}) {
               <View style={{width: '100%', flexDirection: 'row', top: 20, justifyContent: 'center', paddingTop: 14}}>
                   <Text style={{ fontSize: 25, fontWeight: 900, color: 'rgb(81,175,91)' }}>SCHEDULE</Text>
               </View>
-              
+              <Text style={{ position: 'absolute', right: 20, top: 80 }}>
+                  <Text style={{ fontWeight: 600 }}> {currentDate}</Text>
+                </Text>
+              <View style={{ marginTop: 60 }}>
+                  <Calendar style={{ width: 330, backgroundColor: 'rgb(236, 252, 238)', borderRadius: 10, borderWidth: 0.5, borderColor: 'rgb(16, 139, 0)', paddingBottom: 15 }}
+                      markedDates={getMarkedDates(schedule)} 
+                  />
+              </View>
+              <View style={{width: 330, marginTop: 10, gap: 5}}>
+             
               <View style={{ marginTop: 40 }}>
               <Calendar
                 style={{
@@ -257,3 +281,4 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
     }, 
 })
+

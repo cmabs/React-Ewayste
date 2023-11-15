@@ -4,7 +4,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import { useState, useEffect, useRef } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+
 
 import { db, auth, storage, firebase } from '../../firebase_config';
 import { collection, addDoc, getDocs, query } from 'firebase/firestore';
@@ -16,6 +18,7 @@ import { GOOGLE_API_KEY } from '../../environments';
 import SideBar from '../../components/SideNav';
 
 export default function Map({ navigation }) {
+
     const isFocused = useIsFocused();
     const [openSideBar, setOpenSideBar] = useState();
     const mapRef = useRef(null);
@@ -239,6 +242,7 @@ export default function Map({ navigation }) {
                 </TouchableOpacity>
             </View> */}
             {openSideBar}
+
             <View>
                 <View 
                     style={{
@@ -303,6 +307,7 @@ export default function Map({ navigation }) {
                         }
                     </MapView>
                 </View>
+
             </View>
         </>
     );

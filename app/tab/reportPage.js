@@ -9,6 +9,41 @@ export default function Profile({ navigation }) {
   const [userData, setUserData] = useState(null);
   const [userId, setUserId] = useState(null);
 
+import SideBar from '../../components/SideNav';
+
+export default function Report({ navigation }) {
+    const isFocused = useIsFocused();
+    const [refreshing, setRefreshing] = React.useState(false);
+    const [openSideBar, setOpenSideBar] = React.useState();
+    const [users, setUsers] = useState([]);
+    const [userUploads, setUserUploads] = useState([]);
+    const [imageCol, setImageCol] = useState([]);
+    let uploadCollection = [];
+
+    const usersCollection = collection(db, "users");
+    const reportRef = firebase.firestore().collection("generalUsersReports");
+    const imageColRef = ref(storage, "postImages/");
+
+    const currentDate = getCurrentDate();
+
+    const [isPressed, setIsPressed] = useState(false);
+
+    const handlePress = () => {
+      setIsPressed(!isPressed);
+    };
+
+    function getCurrentDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const currentDate = new Date().toLocaleDateString(undefined, options);
+      
+        return currentDate;
+      }
+
+    useEffect(() => {
+        if(!isFocused) {
+            setOpenSideBar();
+        }
+
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -32,8 +67,35 @@ export default function Profile({ navigation }) {
       }
     };
 
-    fetchUserData();
-  }, [userId]);
+            temp.push(
+                <View style={[styles.contentButton, styles.contentGap]}>
+                    <TouchableOpacity activeOpacity={0.5}>
+                        <View style={styles.contentButtonFront}>
+                            <View style={{width: '93%', flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 15}}>
+                                <View style={styles.containerPfp}>
+                                    <Ionicons name='person-outline' style={styles.placeholderPfp} />
+                                </View>
+                                <Text style={{fontSize: 16, fontWeight: 500, color: 'rgba(113, 112, 108, 1)'}}>{users.map((user) => {if(post.userId === user.id) {return user.username;}})}</Text>
+                            </View>
+                            <SafeAreaView style={{width: '100%', marginVertical: 10, paddingHorizontal: 22, paddingBottom: 5, borderBottomWidth: 1, borderColor: 'rgba(190, 190, 190, 1)'}}>
+                                <Text style={{fontSize: 13, marginBottom: 5,}}>{post.location}</Text>
+                                <View style={{ width: '100%', height: 250, backgroundColor: '#D6D6D8', marginVertical: 5, justifyContent: 'center', alignItems: 'center' }}>
+                                    {/* <Ionicons name='images-outline' style={{fontSize: 100, color: 'white'}} /> */}
+                                    <Image src={imageURL} style={{width: '100%', height: '100%', flex: 1, resizeMode: 'cover'}} />
+                                </View>
+                            </SafeAreaView>
+                           
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            );
+        });
+        
+        <ul>
+            {temp.map(item =>
+                <li key="{item}">{item}</li>
+            )}
+        </ul>
 
   return (
     <>
@@ -91,11 +153,24 @@ export default function Profile({ navigation }) {
                 editable={false}
               />
             </View>
-          </View>
-        </SafeAreaView>
-      </ScrollView>
-    </>
-  );
+            {openSideBar}
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+                <SafeAreaView style={styles.container}>
+                    <View style={{width: '100%', flexDirection: 'row', justifyContent: 'center', paddingTop: 14}}>
+                        <Text style={{ fontSize: 25, fontWeight: 900, color: 'rgb(81,175,91)' }}>REPORTS</Text>
+                    </View>
+                    <Text style={{position: 'absolute', right: 20, top: 80}}>
+                    <Text style={{ fontWeight: 600 }}> {currentDate}</Text>
+                    </Text>
+                    <View style={{ marginTop: 50 }}>
+                        {BodyContent ()}
+                    </View>
+                </SafeAreaView>
+            </ScrollView>
+        </>
+    );
 }
 
 const styles = StyleSheet.create({

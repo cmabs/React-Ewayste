@@ -33,6 +33,7 @@ export default function ScheduleAut({ navigation }) {
           } 
         }; 
         fetchSchedule(); 
+
     }, []); 
 
     const isFocused = useIsFocused(); 
@@ -42,7 +43,6 @@ export default function ScheduleAut({ navigation }) {
             setOpenSideBar(); 
         } 
     }); 
-
     const onRefresh = React.useCallback(() => { 
         setRefreshing(true); 
         setTimeout(() => { 
@@ -69,7 +69,7 @@ export default function ScheduleAut({ navigation }) {
         return markedDates;
     }, {});
 }
- 
+
     function ViewSchedExtend(scheduleData) { 
         const sortedScheduleData = [...scheduleData].sort((a, b) => { 
           return new Date(a.selectedDate) - new Date(b.selectedDate); 
@@ -237,11 +237,11 @@ const styles = StyleSheet.create({
     container: { 
         flex: 1, 
         flexDirection: 'column', 
-        backgroundColor: 'white', 
         justifyContent: 'flex-start', 
         alignItems: 'center', 
         paddingBottom: 60, 
     }, 
+
        body: { 
         position: 'relative', 
         width: 350, 
