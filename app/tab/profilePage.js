@@ -187,20 +187,33 @@ export default function Profile({navigation}) {
                         <Ionicons name='person-outline' style={styles.placeholderPfp} />
                     </View>
                     <Text style={styles.usernamePfp}>{username}</Text>
-                    <TouchableOpacity style={styles.editProfile} onPress={() => {
-                        updateUser();
-                        
-                        if (!edit) {
-                            setEdit(true);
-                        } else if (edit) {
-                            setEdit(false);
-                        }
-                    }}>
-                        <View style={{backgroundColor: 'rgb(81,175,91)', padding: 8, borderRadius: 10}}>
-                            <Text style={{color:'white', fontWeight: 700}}>Save Profile</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <View style={styles.containerFrm}>
+                    <View style={{flexDirection: 'row', gap: 10, marginTop: 10}}>
+                        <TouchableOpacity style={styles.editProfile2} onPress={() => {
+                            if (!edit) {
+                                setEdit(true);
+                            } else if (edit) {
+                                setEdit(false);
+                            }
+                        }}>
+                            <View style={{backgroundColor: 'white', padding: 7, paddingHorizontal: 23, borderRadius: 10, borderWidth: 1, borderColor: 'rgb(81,175,91)'}}>
+                                <Text style={{color:'rgb(81,175,91)', fontWeight: 700}}>Cancel</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.editProfile2} onPress={() => {
+                            updateUser();
+                            alert('Profile Updated');
+                            if (!edit) {
+                                setEdit(true);
+                            } else if (edit) {
+                                setEdit(false);
+                            }
+                        }}>
+                            <View style={{backgroundColor: 'rgb(81,175,91)', padding: 8, borderRadius: 10}}>
+                                <Text style={{color:'white', fontWeight: 700}}>Save Profile</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.containerFrm2}>
                         <View style={styles.containerInfoDisplay}>
                             <Text style={styles.containerInfoTxt}>Username</Text>
                             <Text style={styles.containerInfoTxt}>First Name</Text>
@@ -300,14 +313,22 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        paddingBottom: 60,
+        paddingBottom: 30,
     },
     containerFrm: {
-        position: 'absolute',
+        marginTop: 25,
         width: 330,
         justifyContent: 'center',
         alignItems: 'flex-start',
-        top: 290,
+        overflow: 'hidden',
+        flexDirection: 'row',
+        gap: 20,
+    },
+    containerFrm2: {
+        marginTop: 14,
+        width: 330,
+        justifyContent: 'center',
+        alignItems: 'flex-start',
         overflow: 'hidden',
         flexDirection: 'row',
         gap: 20,
@@ -344,8 +365,7 @@ const styles = StyleSheet.create({
 
 
     containerPfp: {
-        position: 'absolute',
-        top: 100,
+        marginTop: 100,
         width: 110,
         height: 110,
         backgroundColor: '#D6D6D8',
@@ -361,15 +381,18 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     usernamePfp: {
-        position: 'absolute',
-        top: 215,
+        marginTop: 10,
         fontSize: 20,
         fontWeight: 500,
         color: 'rgba(113, 112, 108, 1)',
     },
     editProfile: {
-        position: 'absolute',
-        top: 245,
+        marginTop: 15,
+        flexDirection: 'row',
+        gap: 5,
+        alignItems: 'center',
+    },
+    editProfile2: {
         flexDirection: 'row',
         gap: 5,
         alignItems: 'center',
