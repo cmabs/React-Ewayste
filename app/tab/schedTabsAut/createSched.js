@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TextInput, navigate, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Calendar } from 'react-native-calendars';
 import { SelectList } from 'react-native-dropdown-select-list';
@@ -24,7 +24,9 @@ export default function AddSched({navigation}) {
     const [location, setLocation] = useState("");
     const [title, setTitle] = useState("");
     const [assignLocation, setAssignLocation] = useState("");
+    const [assignCollector, setAssignCollector]= useState("")
     const [selectedDate, setSelectedDate] = useState(null);
+    const [markedDates, setMarkedDates] = useState({});
 
     const Type = [
         { key: "Collection", value: "Collection" },
@@ -106,27 +108,27 @@ export default function AddSched({navigation}) {
 
     const createSchedule = async () => {
         let newHourStart, newTitle;
-      
         if (hourStart < 10) {
           newHourStart = "0" + hourStart;
         } else {
           newHourStart = hourStart;
         }
-
         let start = newHourStart + ":" + minStart + " " + ampmStart;
-
         // Default title if not provided
         if (title !== "") {
           newTitle = title;
         } else {
           newTitle = "N/A";
         }
-      
         let id = await AsyncStorage.getItem('userId');
-      
+        // Generate a unique scheduleID
+        const scheduleID = Math.random().toString(36).substring(2, 10);
         // Validate necessary values
-        if ((location !== "" || assignLocation !== "") && description !== "" && selectedDate) {
+        if (
+          (location !== "" || assignLocation !== "") && setAssignCollector !== "" && description !== "" && selectedDate
+        ) {
           await addDoc(schedCollection, {
+            scheduleID: scheduleID, 
             type: selectType,
             description: description,
             location: location,
@@ -134,24 +136,61 @@ export default function AddSched({navigation}) {
             title: newTitle,
             userID: id,
             assignLocation: assignLocation,
-            selectedDate: selectedDate, // Include selected date
+            assignCollector: assignCollector,
+            selectedDate: selectedDate,
           });
-      
-          // Clear form fields after adding schedule
-          setLocation("");
-          setAssignLocation("");
-          setDescription("");
-          setTitle("");
-          setSelectedDate(null); // Reset selected date
-          setSelectType("");
-
-          alert("Schedule successfully added!")
+          alert("Schedule successfully added!");
+          setMarkedDates((prevMarkedDates) => ({
+            ...prevMarkedDates,
+            [selectedDate]: { selected: true, selectedColor: getTypeColor(selectType) },
+          }));
+            setSelectType(null);
+            setDescription("");
+            setLocation("");
+            setTitle("");
+            setAssignLocation("");
+            setAssignCollector("");
+            setSelectedDate(null);
+            setHourStart(null);
+            setMinStart(null);
+            setAmpmStart(null);
+            navigation.navigate('mainSched'); //CANT NAVIGATE
         } else {
           alert("Fill up necessary values");
         }
     };
 
-   
+    const getTypeColor = (type) => {
+        switch (type) {
+          case 'Collection':
+            return 'rgb(242, 190, 45)' ;
+          case 'Assignment':
+            return 'green';
+          case 'Event':
+            return 'rgb(134, 231, 237)';
+        }
+    };
+
+    useEffect(() => {
+        const fetchSchedules = async () => {
+          const querySnapshot = await getDocs(collection(db, "schedule"));
+          const schedules = [];
+          querySnapshot.forEach((doc) => {
+            const { type, selectedDate } = doc.data();
+            schedules.push({ type, selectedDate });
+          });
+      
+          const updatedMarkedDates = {};
+          schedules.forEach(({ type, selectedDate }) => {
+            updatedMarkedDates[selectedDate] = { selected: true, selectedColor: getTypeColor(type) };
+          });
+      
+          setMarkedDates(updatedMarkedDates);
+        };
+      
+        fetchSchedules();
+      }, []);
+
     function SelectDateTime() {
         const markedDates = {};
         if (selectedDate) {
@@ -162,17 +201,12 @@ export default function AddSched({navigation}) {
             <>
                 <Text style={{marginLeft: 30, fontSize: 16, marginTop: 20}}>Select Date</Text>
                 <View style={{width: "100%", justifyContent: "center" , alignItems:"center", marginTop: 10}}>
-                    <Calendar 
-                        style={{ width: 350, backgroundColor: 'white', borderRadius: 10, paddingBottom: 15, shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 2,}, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5,}}
-                        markedDates={markedDates}
-                        onDayPress={(day) => setSelectedDate(day.dateString)} // Capture selected date
-                    />
-                    {selectedDate && (
-                    <Text style={{ marginTop: 10, fontSize: 16, fontWeight: 'bold', color: '#51AF5B'}}>
-                        Selected Date: {selectedDate}
-                    </Text>
-                    )}
+                <Calendar
+                    style={{ width: 320, backgroundColor: 'white', borderRadius: 10, paddingBottom: 15, shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2,}, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5,}}
+                    markedDates={markedDates}
+                    onDayPress={(day) => setSelectedDate(day.dateString)} // Capture selected date
+                />
                 </View>
                 <View style={{width: '100%', paddingHorizontal: 25, flexDirection: 'row', gap: 18, marginTop: 25, justifyContent: 'flex-start', alignItems: 'center'}}>
                     <Text style={{fontSize: 16}}>Select Time:</Text>
@@ -186,7 +220,7 @@ export default function AddSched({navigation}) {
                         boxStyles={{
                             width: 60,
                             backgroundColor: "rgb(189,228,124)",
-                            borderRadius: 0,
+                            borderRadius: 10,
                             color: "rgba(45, 105, 35, 1)",
                             justifyContent: "center",
                             borderWidth: 0,
@@ -210,7 +244,8 @@ export default function AddSched({navigation}) {
                         boxStyles={{
                             width: 60,
                             backgroundColor: "rgb(189,228,124)",
-                            borderRadius: 0,
+                            borderRadius: 10,
+                            marginLeft: 10,
                             color: "rgba(45, 105, 35, 1)",
                             justifyContent: "center",
                             borderWidth: 0,
@@ -220,7 +255,8 @@ export default function AddSched({navigation}) {
                             backgroundColor: "rgb(231,247,233)",
                             top: -10,
                             marginBottom: -10,
-                            borderRadius: 0,
+                            borderRadius: 10,
+                            marginLeft: 10,
                             zIndex: -1,
                             borderWidth: 0,
                             alignSelf: 'center',
@@ -234,7 +270,8 @@ export default function AddSched({navigation}) {
                         boxStyles={{
                             width: 70,
                             backgroundColor: "rgb(189,228,124)",
-                            borderRadius: 0,
+                            borderRadius: 10,
+                            marginLeft: 10,
                             color: "rgba(45, 105, 35, 1)",
                             justifyContent: "center",
                             borderWidth: 0,
@@ -244,7 +281,8 @@ export default function AddSched({navigation}) {
                             backgroundColor: "rgb(231,247,233)",
                             top: -10,
                             marginBottom: -10,
-                            borderRadius: 0,
+                            borderRadius: 10,
+                            marginLeft: 10,
                             zIndex: -1,
                             borderWidth: 0,
                             alignSelf: 'center',
@@ -337,6 +375,9 @@ export default function AddSched({navigation}) {
                             paddingLeft: 15,
                         }}
                         placeholder='Select Collector to Assign'
+                        onChangeText={(e) => {
+                            setAssignCollector(e);
+                        }}
                     />
                 </View>
                 <View style={{width: '100%', paddingHorizontal: 25, marginTop: 5}}>
@@ -465,19 +506,19 @@ export default function AddSched({navigation}) {
                                 data={Type}
                                 placeholder="Select Type"
                                 boxStyles={{
-                                    width: 343,
+                                    width: 310,
                                     backgroundColor: "rgb(189,228,124)",
-                                    borderRadius: 0,
+                                    borderRadius: 10,
                                     color: "rgba(45, 105, 35, 1)",
                                     justifyContent: "center",
                                     borderWidth: 0,
                                 }}
                                 dropdownStyles={{
-                                    width: 343,
+                                    width: 310,
                                     backgroundColor: "rgb(231,247,233)",
                                     top: -10,
                                     marginBottom: -10,
-                                    borderRadius: 0,
+                                    borderRadius: 10,
                                     zIndex: -1,
                                     borderWidth: 0,
                                     alignSelf: 'center',
@@ -488,7 +529,7 @@ export default function AddSched({navigation}) {
                         {DisplayType()}
                         <View style={{width: '100%', marginTop: 30, marginBottom: 90, alignItems: 'center'}}>
                             <View style={styles.button}>
-                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={()=>{createSchedule()}}>
+                                <TouchableOpacity style={{width: '100%', height: '100%'}} activeOpacity={0.5} onPress={()=>{createSchedule();}}>
                                     <Text style={styles.buttonTxt}>Save</Text>
                                 </TouchableOpacity>
                             </View>

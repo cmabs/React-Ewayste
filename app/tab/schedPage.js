@@ -23,6 +23,31 @@ export default function ScheduleAut({navigation}) {
   
     return currentDate;
   }
+
+  useEffect(() => {
+    const currentDate = new Date().toISOString().split('T')[0]; // Get the current date
+
+    const fetchReports = async () => {
+      try {
+        // Query for reports today
+        const todayQuery = query(collection(db, 'generalUsersReports'), where('dateTime', '==', currentDate));
+        const todaySnapshot = await getDocs(todayQuery);
+        const reportsTodayCount = todaySnapshot.size;
+        setReportsToday(reportsTodayCount);
+
+        // Query for all reports
+        const allReportsQuery = query(collection(db, 'generalUsersReports'));
+        const allReportsSnapshot = await getDocs(allReportsQuery);
+        const totalReportsCount = allReportsSnapshot.size;
+        setTotalReports(totalReportsCount);
+      } catch (error) {
+        console.log('Error fetching reports:', error);
+      }
+    };
+
+    fetchReports();
+    }, []);
+
     useEffect(() => { 
         const fetchSchedule = async () => { 
           try { 
@@ -65,6 +90,7 @@ export default function ScheduleAut({navigation}) {
           }
           return markedDates;
       }, {});
+
       function getCurrentDate() {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const currentDate = new Date().toLocaleDateString(undefined, options);
@@ -171,7 +197,7 @@ export default function ScheduleAut({navigation}) {
               ))} 
             </View> 
             <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}> 
-              <View style={{ width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5 }}> 
+              <View style={{ width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5, marginBottom: 15 }}> 
                 <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(false); }}> 
                   <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)' }}> 
                     <Text>Show less</Text> 
@@ -188,9 +214,6 @@ export default function ScheduleAut({navigation}) {
           <Ionicons name='menu' style={{ fontSize: 40, color: 'rgb(81,175,91)' }} />
       </TouchableOpacity>
       {openSideBar}
-      <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }}  onPress={() => {navigation.navigate('notification')}}> 
-          <Ionicons name='notifications' style={{ fontSize: 35, color: 'green' }} /> 
-      </TouchableOpacity> 
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
@@ -207,6 +230,20 @@ export default function ScheduleAut({navigation}) {
                   />
               </View>
               <View style={{width: 330, marginTop: 10, gap: 5}}>
+             
+              <View style={{ marginTop: 40 }}>
+              <Calendar
+                style={{
+                width: 320,
+                backgroundColor: 'rgb(236, 252, 238)',
+                borderRadius: 10,
+                paddingBottom: 15,
+                elevation: 4
+                }}
+                markedDates={getMarkedDates(schedule)}
+            />
+              </View>
+              <View style={{width: 320, marginTop: 10, gap: 5}}>
                   <View style={{ flexDirection: 'row', gap: 10 }}>
                       <View style={{ width: 20, height: 20, backgroundColor: 'rgb(242, 190, 45)' }} />
                       <Text>Schedule for Collection</Text>
@@ -230,7 +267,7 @@ const styles = StyleSheet.create({
     container: { 
         flex: 1, 
         flexDirection: 'column', 
-        backgroundColor: 'rgb(246, 242, 239)', 
+        backgroundColor: 'white',
         justifyContent: 'flex-start', 
         alignItems: 'center', 
         paddingBottom: 60, 
@@ -243,4 +280,5 @@ const styles = StyleSheet.create({
         paddingBottom: 10, 
         alignItems: 'center', 
     }, 
-}) 
+})
+

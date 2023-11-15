@@ -3,7 +3,14 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAr
 import SessionStorage from 'react-native-session-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { auth } from '../firebase_config';
+import { signOut } from 'firebase/auth'
+
 export default function SideBar(navigation) {
+    const logout = async () => {
+        await signOut(auth);
+    }
+
     return (
         <>
             <View style={{ width: 280, height: '100%', backgroundColor: '#ffffff', paddingBottom: 60, alignItems: 'center' }}>
@@ -28,7 +35,7 @@ export default function SideBar(navigation) {
                     </View>
                 </View>
                 <View style={{position: 'absolute', width: '95%', height: 40, bottom: 80, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => { navigation.navigate('login') }}>
+                    <TouchableOpacity activeOpacity={0.5} onPress={() => { logout(); navigation.navigate('login'); }}>
                         <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}>
                             <Text>Logout</Text>
                         </View>

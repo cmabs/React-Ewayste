@@ -5,18 +5,150 @@ import { useIsFocused } from '@react-navigation/native';
 import { useState, useEffect, useRef } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
+
+import { db, auth, storage, firebase } from '../../firebase_config';
+import { collection, addDoc, getDocs, query } from 'firebase/firestore';
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
+
+import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { GOOGLE_API_KEY } from '../../environments';
 import SideBar from '../../components/SideNav';
 
 export default function Map({ navigation }) {
-    const [openSideBar, setOpenSideBar] = React.useState();
-    const locationCoordinates = {
-        latitude: 10.3156992,
-        longitude: 123.88543660000005,
-      };
-   
 
     const isFocused = useIsFocused();
+    const [openSideBar, setOpenSideBar] = useState();
+    const mapRef = useRef(null);
+    let searchLongitude, searchLatitude;
+
+    const [userUploads, setUserUploads] = useState([]);
+    const [imageCol, setImageCol] = useState([]);
+    const [state, setState] = useState({ coordinates: [] });
+
+    const reportRef = firebase.firestore().collection("generalUsersReports");
+    const imageColRef = ref(storage, "postImages/");
+
+    const [currentLat, setCurrentLat] = useState(null);
+    const [currentLon, setCurrentLon] = useState(null);
+
+    useEffect(() => {
+        reportRef.onSnapshot(
+            querySnapshot => {
+                const uploads = []
+                querySnapshot.forEach((doc) => {
+                    const {associatedImage, dateTime, description, location, status, userId, longitude, latitude} = doc.data();
+                    uploads.push({
+                        id: doc.id,
+                        associatedImage,
+                        dateTime,
+                        description,
+                        location,
+                        status,
+                        userId,
+                        longitude,
+                        latitude
+                    })
+                })
+                setUserUploads(uploads)
+
+                listAll(imageColRef).then((response) => {
+                    setImageCol([]);
+                    response.items.forEach((item) => {
+                        getDownloadURL(item).then((url) => {
+                            setImageCol((prev) => [...prev, url])
+                        })
+                    })
+                })
+                
+                setState({ coordinates: [] });
+                userUploads.map((pin) => {
+                    let imageURL;
+                    imageCol.map((url) => {
+                        if(url.includes(pin.associatedImage)) {
+                            imageURL = url;
+                        }
+                    })
+                    try {
+                        const lat = parseFloat(pin.latitude);
+                        const long = parseFloat(pin.longitude);
+                        setState((prevState) => ({
+                            ...prevState,
+                            coordinates: [...prevState.coordinates, { name: pin.id, latitude: lat, longitude: long, image: imageURL }],
+                        }));
+                    } catch (e) {
+                        console.log(e);
+                    }
+                })
+            }
+        )
+    },[]);
+    
+    const reload = async () => {
+        reportRef.onSnapshot(
+            querySnapshot => {
+                const uploads = []
+                querySnapshot.forEach((doc) => {
+                    const {associatedImage, dateTime, description, location, status, userId, longitude, latitude} = doc.data();
+                    uploads.push({
+                        id: doc.id,
+                        associatedImage,
+                        dateTime,
+                        description,
+                        location,
+                        status,
+                        userId,
+                        longitude,
+                        latitude
+                    })
+                })
+                setUserUploads(uploads)
+
+                listAll(imageColRef).then((response) => {
+                    setImageCol([]);
+                    response.items.forEach((item) => {
+                        getDownloadURL(item).then((url) => {
+                            setImageCol((prev) => [...prev, url])
+                        })
+                    })
+                })
+                
+                setState({ coordinates: [] });
+                userUploads.map((pin) => {
+                    let imageURL;
+                    imageCol.map((url) => {
+                        if(url.includes(pin.associatedImage)) {
+                            imageURL = url;
+                        }
+                    })
+                    try {
+                        const lat = parseFloat(pin.latitude);
+                        const long = parseFloat(pin.longitude);
+                        setState((prevState) => ({
+                            ...prevState,
+                            coordinates: [...prevState.coordinates, { name: pin.id, latitude: lat, longitude: long, image: imageURL }],
+                        }));
+                    } catch (e) {
+                        console.log(e);
+                    }
+                })
+            }
+        )
+    }
+
+    const moveCameraTo = (latitude, longitude) => {
+        const region = {
+            latitude,
+            longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.02,
+        };
+      
+        mapRef.current.animateToRegion(region, 1000);
+    }
+
     useEffect(() => {
         if(!isFocused) {
             setOpenSideBar();
@@ -37,48 +169,145 @@ export default function Map({ navigation }) {
         );
     }
 
+    const quickRoute = () => {
+        (async() => {
+            let {status} = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+                return;
+            }
+            let currentLocation = await Location.getCurrentPositionAsync({});
+            setCurrentLat(currentLocation.coords.latitude);
+            setCurrentLon(currentLocation.coords.longitude);
+        })();
+    }
+
     return (
         <>
-            <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideNavigation(navigation))}}>
-                <Ionicons name='menu' style={{ fontSize: 40, color: 'rgb(70,149,78)' }} />
+            <View style={{position: 'absolute', zIndex: 99, width: '100%', paddingTop: 30, flexDirection: 'row', paddingHorizontal: 20}}>
+                <TouchableOpacity style={{ zIndex: 99, marginRight: '2%', height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }} onPress={() => {setOpenSideBar(SideNavigation(navigation))}}>
+                    <Ionicons name='menu' style={{ fontSize: 40, color: 'rgb(70,149,78)' }} />
+                </TouchableOpacity>
+                <View style={{ flex: 2, zIndex: 99 }}>
+                    <GooglePlacesAutocomplete
+                        placeholder='Search'
+                        fetchDetails
+                        enablePoweredByContainer={false}
+                        onPress={(data, details = null) => {
+                            searchLatitude = details.geometry.location.lat;
+                            searchLongitude = details.geometry.location.lng;
+                            console.log('Latitude:', searchLatitude);
+                            console.log('Longitude:', searchLongitude);
+                            moveCameraTo(searchLatitude, searchLongitude);
+                        }}
+                        query={{
+                            key: GOOGLE_API_KEY,
+                            language: 'en',
+                        }}
+                        styles={{
+                            textInput: {
+                                height: 38,
+                                fontSize: 14,
+                                marginTop: 3,
+                                shadowColor: 'black',
+                                shadowOffset:{width: 2, height: 2},
+                                shadowOpacity: 0.4,
+                                shadowRadius: 4,
+                                elevation: 4,
+                            },
+                            listView: {
+                                backgroundColor:'#c8c7cc',
+                            },
+                            row: {
+                                backgroundColor: '#FFFFFF',
+                                padding: 9,
+                                height: 38,
+                                marginVertical: 0.01,
+                            },
+                            description: {
+                                fontSize: 12
+                            },
+                        }}
+                    />
+                </View>
+            </View>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => {reload()}} style={{position: 'absolute', height: 40, width: 40, backgroundColor: 'orange', top: 90, right: 15, zIndex: 99, justifyContent: 'center', alignItems: 'center', borderRadius: 100, shadowColor: 'black', shadowOffset:{width: 3, height: 3}, shadowOpacity: 0.5, shadowRadius: 4, elevation: 4,}}>
+                        <Ionicons name='refresh-circle' style={{ fontSize: 30, top: 0, left: 1, color: 'white' }} />
             </TouchableOpacity>
-            <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 0.5, borderColor: 'rgb(0,0,0)', overflow: 'hidden' }}>
+            {/* <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 0.5, borderColor: 'rgb(0,0,0)', overflow: 'hidden' }}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                         <Ionicons name='add-circle' style={{ fontSize: 60, color: 'rgb(255,203,60)', top: -2.3, right: -1.2 }} />
                     </View>
                 </TouchableOpacity>
-            </View>
-            <View style={{ position: 'absolute', right: 31, bottom: 140, zIndex: 99, height: 75, width: 40, borderRadius: 10, backgroundColor: 'rgb(200,200,200)', borderWidth: 0.7, borderColor: 'rgb(0,0,0)', overflow: 'hidden' }}>
-                <TouchableOpacity activeOpacity={0.5} style={{ width: '100%', height: '50%' }}>
-                    <View style={{ width: '100%', height: '100%', backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', borderBottomWidth: 0.6 }}>
-                        <Ionicons name='add' style={{fontSize: 25}} ></Ionicons>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.5} style={{ width: '100%', height: '50%' }}>
-                    <View style={{ width: '100%', height: '100%', backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', borderTopWidth: 0.6 }}>
-                        <Ionicons name='remove' style={{fontSize: 25}} ></Ionicons>
-                    </View>
-                </TouchableOpacity>
-            </View>
-            <TouchableOpacity activeOpacity={0.8} style={{ position: 'absolute', left: 70, top: 34, zIndex: 99 }} >
-                <View style={{height: 36, width: 290, backgroundColor: 'rgba(255,255,255,0.8)', borderRadius: 10, borderWidth: 0.5, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 8}}>
-                    <Ionicons name='search' style={{ fontSize: 27, color: 'rgb(180,180,180)' }} />
-                </View>
-            </TouchableOpacity>
+            </View> */}
             {openSideBar}
-            <View style={{display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                <MapView  style={{width: '100%', height: '100%'}} 
-                    initialRegion={{
-                        latitude: 10.3156992,
-                        longitude: 123.88543660000005,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
+
+            <View>
+                <View 
+                    style={{
+                        height: 80,
+                        backgroundColor: 'rgba(126, 185, 73, 1)',
+                        borderBottomLeftRadius: 10,
+                        borderBottomRightRadius: 10,
+                        zIndex: 90,
+                        shadowColor: 'black',
+                        shadowOffset:{width: 3, height: 3},
+                        shadowOpacity: 0.5,
+                        shadowRadius: 4,
+                        elevation: 4,
                     }}
+                />
+                <View style={{display: 'flex', height: '91%', justifyContent: 'center', alignItems: 'center', top: -10}}>
+                    <MapView
+                        ref={mapRef}
+                        style={{width: '100%', height: '100%'}}
+                        provider={PROVIDER_GOOGLE}
+                        initialRegion={{
+                            latitude: 10.3156992,
+                            longitude: 123.88543660000005,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}
                     >
-                    <Marker coordinate={locationCoordinates}/>
-                   
-                </MapView>
+                        {state.coordinates.map(marker => (
+                            <Marker
+                                key={marker.name}
+                                coordinate={{
+                                    latitude: parseFloat(marker.latitude),
+                                    longitude: parseFloat(marker.longitude)
+                                }}
+                                title='My Location'
+                                onCalloutPress={() => {quickRoute();}}
+                            >
+                                <Ionicons name='location' style={{fontSize: 30, color: '#F76811'}} />
+                                <Callout>
+                                    <View style={{width: 80, height: 80}}>
+                                        <Text style={{position: 'absolute', top: -35, paddingBottom: 40}}>
+                                            <Image style={{width: 80, height: 80}} source={{uri: marker.image}} />
+                                        </Text>
+                                    </View>
+                                </Callout>
+                            </Marker>
+                        ))}
+
+                        {currentLat !== null && currentLon !== null ? 
+                            <Marker
+                                key={"My Location"}
+                                coordinate={{
+                                    latitude: parseFloat(currentLat),
+                                    longitude: parseFloat(currentLon)
+                                }}
+                            >
+                                <Ionicons name='location' style={{fontSize: 35, color: '#D31111'}} />
+                                <Ionicons name='location' style={{fontSize: 40, color: '#FFFFFF', zIndex: -1, position: 'absolute', transform: [{translateX: -2.5}, {translateY: -2.5}]}} />
+                            </Marker>
+                            :
+                            <></>
+                        }
+                    </MapView>
+                </View>
+
             </View>
         </>
     );
