@@ -258,15 +258,6 @@ export default function NewsfeedAut({navigation}) {
                         </View>
                     </View>
                 </View>
-              </View>
-              <View style={styles.headerContentContainer}>
-                <Text style={styles.headerText}>TOTAL REPORT</Text>
-                <View style={styles.headerCntr}>
-                  <Text style={styles.headerContent}>38</Text>
-                  <Text style={styles.headerContentText}>Garbages</Text>
-                </View>
-              </View>
-            </View>
           </>
         );
       }

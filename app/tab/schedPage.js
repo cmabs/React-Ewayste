@@ -230,18 +230,7 @@ export default function ScheduleAut({navigation}) {
                   />
               </View>
               <View style={{width: 330, marginTop: 10, gap: 5}}>
-             
-              <View style={{ marginTop: 40 }}>
-              <Calendar
-                style={{
-                width: 320,
-                backgroundColor: 'rgb(236, 252, 238)',
-                borderRadius: 10,
-                paddingBottom: 15,
-                elevation: 4
-                }}
-                markedDates={getMarkedDates(schedule)}
-            />
+               
               </View>
               <View style={{width: 320, marginTop: 10, gap: 5}}>
                   <View style={{ flexDirection: 'row', gap: 10 }}>

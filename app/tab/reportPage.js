@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Image } from "react-native";
+import * as React from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Button, RefreshControl, Image } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
+import { useIsFocused } from '@react-navigation/native';
+import { useState, useEffect, useRef } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Profile({ navigation }) {
-  const [userData, setUserData] = useState(null);
-  const [userId, setUserId] = useState(null);
+import { db, auth, storage, firebase } from '../../firebase_config';
+import { collection, addDoc, getDocs, query } from 'firebase/firestore';
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
 
 import SideBar from '../../components/SideNav';
 
@@ -43,29 +43,92 @@ export default function Report({ navigation }) {
         if(!isFocused) {
             setOpenSideBar();
         }
-
-  useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setUserId(user.uid);
-      }
     });
-    return () => unsubscribe(); // Cleanup the listener when the component unmounts
-  }, []);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        if (userId) {
-          const userDoc = await firebase.firestore().collection('users').doc(userId).get();
-          if (userDoc.exists) {
-            setUserData(userDoc.data());
-          }
-        }
-      } catch (error) {
-        console.log('Error fetching user data:', error);
-      }
-    };
+    useEffect(() => {
+        const getUsers = async () => {
+            const data = await getDocs(usersCollection);
+            setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        };
+        getUsers();
+
+        reportRef.onSnapshot(
+            querySnapshot => {
+                const uploads = []
+                querySnapshot.forEach((doc) => {
+                    const {associatedImage, dateTime, description, location, status, userId} = doc.data();
+                    uploads.push({
+                        id: doc.id,
+                        associatedImage,
+                        dateTime,
+                        description,
+                        location,
+                        status,
+                        userId
+                    })
+                })
+                setUserUploads(uploads)
+                
+                listAll(imageColRef).then((response) => {
+                    setImageCol([]);
+                    response.items.forEach((item) => {
+                        getDownloadURL(item).then((url) => {
+                            setImageCol((prev) => [...prev, url])
+                        })
+                    })
+                })
+            }
+        )
+    }, [])
+    
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 1000);
+    }, []);
+
+    function SideNavigation(navigation) {
+        return (
+            <>
+                <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'flex-start', backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 99}}>
+                    <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 150 }} onPress={() => {setOpenSideBar()}}>
+                        <Ionicons name='arrow-back' style={{ fontSize: 40, color: 'rgb(81,175,91)' }} />
+                    </TouchableOpacity>
+                    {SideBar(navigation)}
+                    <TouchableOpacity style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0)', zIndex: -1}} onPress={() => {setOpenSideBar()}} />
+                </View>
+            </>
+        );
+    }
+
+    function BodyContent() {
+        userUploads.map((uploads) => {
+            var valueToPush = { };
+            valueToPush["id"] = uploads.id;
+            valueToPush["imageLink"] = uploads.associatedImage;
+            valueToPush["dateTime"] = uploads.dateTime;
+            valueToPush["description"] = uploads.description;
+            valueToPush["location"] = uploads.location;
+            valueToPush["status"] = uploads.status;
+            valueToPush["userId"] = uploads.userId;
+            uploadCollection.push(valueToPush);
+            uploadCollection.sort((a, b) => {
+                let fa = a.dateTime, fb = b.dateTime;
+                if (fa < fb) {return -1;}
+                if (fa > fb) {return 1;}
+                return 0;
+            });
+        })
+
+        let temp = [];
+        uploadCollection.map((post) => {
+            let imageURL;
+            imageCol.map((url) => {
+                if(url.includes(post.imageLink)) {
+                    imageURL = url;
+                }
+            })
 
             temp.push(
                 <View style={[styles.contentButton, styles.contentGap]}>
@@ -97,61 +160,24 @@ export default function Report({ navigation }) {
             )}
         </ul>
 
-  return (
-    <>
-      <TouchableOpacity style={{ position: 'absolute', right: 20, top: 31, zIndex: 99 }} onPress={() => { navigation.navigate('home') }}>
-        <Ionicons name='home' style={{ fontSize: 35, color: 'rgb(81,175,91)' }} />
-      </TouchableOpacity>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <SafeAreaView style={styles.container}>
-          <Text style={styles.title}>PROFILE</Text>
-          <View style={styles.containerPfp}>
-            <Ionicons name='person-outline' style={styles.placeholderPfp} />
-          </View>
-          <Text style={styles.usernamePfp}>{userData?.username}</Text>
-          <TouchableOpacity style={styles.editProfile}>
-            <Text style={{ color: 'rgb(81,175,91)' }}>Edit Profile</Text>
-            <Ionicons name='create-outline' style={{ color: 'rgb(81,175,91)' }} />
-          </TouchableOpacity>
-          <View style={styles.containerFrm}>
-            <View style={styles.containerInfoDisplay}>
-              <Text style={styles.containerInfoTxt}>Username</Text>
-              <Text style={styles.containerInfoTxt}>Name</Text>
-              <Text style={styles.containerInfoTxt}>Province</Text>
-              <Text style={styles.containerInfoTxt}>Municipality</Text>
-              <Text style={styles.containerInfoTxt}>Phone Number</Text>
+        return (
+            <View>
+                {temp}
             </View>
-            <View style={styles.containerInfoDisplay}>
-              <TextInput
-                style={styles.input}
-                placeholder="Username"
-                value={userData?.username}
-                editable={false}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Name"
-                value={userData?.name}
-                editable={false}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Province"
-                value={userData?.province}
-                editable={false}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Municipality"
-                value={userData?.municipality}
-                editable={false}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Phone Number"
-                value={userData?.phoneNumber}
-                editable={false}
-              />
+        );
+    }
+
+    return (
+        <>
+            <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideNavigation(navigation))}}>
+                <Ionicons name='menu' style={{ fontSize: 40, color: 'rgb(81,175,91)' }} />
+            </TouchableOpacity>
+            <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 99, height: 60, width: 60, borderRadius: 100, backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgb(81,175,91)', overflow: 'hidden' }}>
+                <TouchableOpacity activeOpacity={0.5} onPress={() => {navigation.navigate('camera')}}>
+                    <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                        <Ionicons name='add-circle' style={{ fontSize: 60, color: 'rgb(81,175,91)', top: -3, right: -0.9 }} />
+                    </View>
+                </TouchableOpacity>
             </View>
             {openSideBar}
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={
@@ -174,80 +200,50 @@ export default function Report({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'white',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingBottom: 60,
-  },
-  containerFrm: {
-    position: 'absolute',
-    width: 330,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    top: 290,
-    overflow: 'hidden',
-    flexDirection: 'row',
-    gap: 20,
-  },
-  containerInfoTxt: {
-    height: 40,
-    marginVertical: 5,
-    textAlignVertical: 'center',
-    textAlign: 'right',
-    color: 'rgba(113, 112, 108, 1)',
-  },
-  containerInfoDisplay: {
-    gap: 10,
-  },
-  title: {
-    position: 'absolute',
-    top: 30,
-    fontWeight: "700",
-    fontSize: 25,
-    color: 'rgba(113, 112, 108, 1)',
-  },
-  input: {
-    height: 40,
-    width: 200,
-    paddingVertical: 0,
-    paddingLeft: 10,
-    backgroundColor: 'rgb(189,227,124)',
-    borderRadius: 10,
-    marginVertical: 5,
-    color: 'rgba(45, 105, 35, 1)',
-  },
-  containerPfp: {
-    position: 'absolute',
-    top: 100,
-    width: 110,
-    height: 110,
-    backgroundColor: '#D6D6D8',
-    borderRadius: 55,
-    borderWidth: 2,
-    borderColor: 'rgb(81,175,91)',
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderPfp: {
-    fontSize: 70,
-    color: 'white',
-  },
-  usernamePfp: {
-    position: 'absolute',
-    top: 215,
-    fontSize: 20,
-    fontWeight: "500",
-    color: 'rgba(113, 112, 108, 1)',
-  },
-  editProfile: {
-    position: 'absolute',
-    top: 245,
-    flexDirection: 'row',
-    gap: 5,
-    alignItems: 'center',
-  }
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        backgroundColor: '#ffffff',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingBottom: 60,
+        paddingTop: 20,
+    },
+    contentGap: {
+        marginBottom: 10,
+    },
+    contentButton: {
+        width: 330,
+        backgroundColor: 'rgb(230, 230, 230)',
+        borderRadius: 5,
+        overflow: 'hidden',
+        shadowColor: "rgb(0,0,0)",
+        shadowOffset: {
+            width: 3,
+            height: 3,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 1,
+        elevation: 5,
+    },
+    contentButtonFront: {
+        width: '100%',
+        backgroundColor: 'rgb(231, 247, 233)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'rgba(113, 112, 108, 1)',
+    },
+    containerPfp: {
+        width: 35,
+        height: 35,
+        backgroundColor: '#D6D6D8',
+        borderRadius: 55,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    placeholderPfp: {
+        fontSize: 25,
+        color: 'rgba(113, 112, 108, 1)',
+    },
 });
