@@ -1,5 +1,5 @@
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
-import { useState } from "react";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Image } from "react-native";
+import { useState, useEffect } from "react";
 import CheckBox from '../../../components/CheckBox';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -8,12 +8,16 @@ import { db, auth } from '../../../firebase_config';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
+import * as ImagePicker from 'expo-image-picker';
+
 export default function Registration3({ navigation }) {
     const [agree, setAgree] = useState(false);
     const [province, setProvince] = useState("");
     const [municipality, setMunicipality] = useState("");
     const [barangay, setBarangay] = useState("");
     const [contactNo, setContactNo] = useState("");
+    const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
+    const [image, setImage] = useState(null);
     
     const usersCollection = collection(db, "users");
 
@@ -84,6 +88,24 @@ export default function Registration3({ navigation }) {
         navigation.navigate('authorityRoute');
     }
 
+    useEffect(() => {
+        (async () => {
+            const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            setHasGalleryPermission(galleryStatus.status === 'granted');
+        })();
+    }, [])
+    
+    const pickImage = async () => {
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 1
+            });
+            console.log(result.assets[0]);
+            setImage(result.assets[0]);
+        } catch(e) {}
+    }
+
     return (
         <ScrollView contentContainerStyle={{flexGrow:1}}>
             <View style={styles.container}>
@@ -118,6 +140,29 @@ export default function Registration3({ navigation }) {
                         placeholder="Contact Number"
                         onChangeText={(e) => {setContactNo(e)}}
                     />
+                    {!image ?
+                        <View style={{marginTop: 10}}>
+                            <Text style={{paddingLeft: 10, color: 'rgba(45, 105, 35, 1)', fontSize: 13, fontWeight: 700}}>JOB ID PHOTO</Text>
+                            <TouchableOpacity activeOpacity={0.5} onPress={pickImage} style={{height: 200, width: 280, backgroundColor: '#EEF1ED', borderRadius: 20, justifyContent: 'center', alignItems: 'center'}}>
+                                <View style={{height: 150, width: 230, borderStyle: "dashed", borderWidth: 2, borderRadius: 20, borderColor: '#8E928C', justifyContent: 'center', alignItems: 'center'}}>
+                                    <Ionicons name='image' style={{fontSize: 100, color: '#8E928C'}} />
+                                    <Text style={{fontSize: 11, fontWeight: 700, color: '#8E928C'}}>Select Photo of ID from Gallery</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                        :
+                        <View style={{marginTop: 10}}>
+                            <Text style={{paddingLeft: 10, color: 'rgba(45, 105, 35, 1)', fontSize: 13, fontWeight: 700}}>JOB ID PHOTO</Text>
+                            <View style={{height: 200, width: 280, backgroundColor: '#EEF1ED', borderRadius: 20, justifyContent: 'center', alignItems: 'center', padding: 5}}>
+                                <TouchableOpacity activeOpacity={0.5} onPress={() => {setImage(null)}} style={{position: 'absolute', height: 20, width: 20, backgroundColor: 'white', borderRadius: 100, justifyContent: 'center', alignItems: 'center', zIndex: 100, top: 15, right: 15}}>
+                                    <Ionicons name='close-circle' style={{fontSize: 20, left: 0.6, bottom: 0.6}} />
+                                </TouchableOpacity>
+                                <View style={{height: '100%', width: '100%'}}>
+                                    <Image source={{uri: image.uri}} style={{flex: 1, resizeMode: 'cover', height: 1, borderRadius: 15}} />
+                                </View>
+                            </View>
+                        </View>
+                    }
                 </View>
                 <View style={styles.containerChkbx}>
                     <CheckBox
@@ -152,7 +197,7 @@ export default function Registration3({ navigation }) {
         </ScrollView>
     );
 }
-
+// Start Here
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -162,24 +207,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     containerBtn: {
-        top: 230,
+        marginTop: 30,
         gap: 10,
+        marginBottom: 30
     },
     containerFrm: {
         justifyContent: 'center',
         alignItems: 'center',
-        top: 150,
+        marginTop: 100,
     },
     containerChkbx: {
         flexDirection: "row",
-        top: 190,
+        marginTop: 15,
         left: -12,
         width: 260,
     },
     title: {
         fontWeight: "900",
         fontSize: 30,
-        bottom: 30,
+        bottom: 20,
         color: 'rgba(16, 139, 0, 1)',
     },
     input: {
