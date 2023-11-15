@@ -4,12 +4,17 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import { useState, useEffect, useRef } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 import SideBar from '../../components/SideNav';
 
 export default function Map({ navigation }) {
     const [openSideBar, setOpenSideBar] = React.useState();
+    const locationCoordinates = {
+        latitude: 10.3156992,
+        longitude: 123.88543660000005,
+      };
+   
 
     const isFocused = useIsFocused();
     useEffect(() => {
@@ -63,14 +68,17 @@ export default function Map({ navigation }) {
             </TouchableOpacity>
             {openSideBar}
             <View style={{display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                <MapView style={{width: '100%', height: '100%'}} 
+                <MapView  style={{width: '100%', height: '100%'}} 
                     initialRegion={{
                         latitude: 10.3156992,
                         longitude: 123.88543660000005,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}
-                />
+                    >
+                    <Marker coordinate={locationCoordinates}/>
+                   
+                </MapView>
             </View>
         </>
     );

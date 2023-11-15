@@ -50,7 +50,8 @@ export default function NewsfeedAut({navigation}) {
         };
     
         fetchReports();
-      }, []);
+    }, []);
+
 
     useEffect(() => {
         if(!isFocused) {
