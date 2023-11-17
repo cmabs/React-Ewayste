@@ -12,9 +12,7 @@ export default function ScheduleAut({navigation}) {
   const [openSideBar, setOpenSideBar] = React.useState();
   const [viewSched, setViewSched] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false); 
-
   const [schedule, setSchedule] = useState([]);
-  const [selectedDate, setSelectedDate] = useState('');
   const currentDate = getCurrentDate();
 
   function getCurrentDate() {
@@ -29,17 +27,14 @@ export default function ScheduleAut({navigation}) {
 
     const fetchReports = async () => {
       try {
-        // Query for reports today
         const todayQuery = query(collection(db, 'generalUsersReports'), where('dateTime', '==', currentDate));
         const todaySnapshot = await getDocs(todayQuery);
         const reportsTodayCount = todaySnapshot.size;
-        setReportsToday(reportsTodayCount);
-
-        // Query for all reports
         const allReportsQuery = query(collection(db, 'generalUsersReports'));
         const allReportsSnapshot = await getDocs(allReportsQuery);
         const totalReportsCount = allReportsSnapshot.size;
         setTotalReports(totalReportsCount);
+        setReportsToday(reportsTodayCount);
       } catch (error) {
         console.log('Error fetching reports:', error);
       }
@@ -139,75 +134,154 @@ export default function ScheduleAut({navigation}) {
             </> 
         ); 
     } 
-    function ViewSchedButton(scheduleData) { 
-        return ( 
-          <> 
-            <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}> 
-              <View style={{width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5}}> 
-                <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(true); }}> 
-                  <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)'}}> 
-                    <Text>View all Events</Text> 
+    function ViewSchedButton({ scheduleData }) {
+      const handleViewAllEvents = async () => {
+        try {
+          const querySnapshot = await getDocs(collection(db, 'schedule'));
+          const allEvents = querySnapshot.docs.map((doc) => doc.data());
+          console.log('All Events:', allEvents);
+          // Perform the necessary action with the fetched events
+        } catch (error) {
+          console.log('Error fetching events:', error);
+        }
+      };
+    
+      return (
+        <>
+          <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}>
+            <View
+              style={{
+                width: '95%',
+                height: 40,
+                backgroundColor: 'rgb(230, 230, 230)',
+                overflow: 'hidden',
+                borderRadius: 10,
+                borderWidth: 0.5,
+              }}
+            >
+              <TouchableOpacity activeOpacity={0.5} onPress={handleViewAllEvents}>
+                <View
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgb(247, 245, 243)',
+                  }}
+                >
+                  <Text>View all Events</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </>
+      );
+    }
+  
+    function ViewSchedExtend({ scheduleData }) {
+      const sortedScheduleData = [...scheduleData].sort((a, b) => {
+        return new Date(a.selectedDate) - new Date(b.selectedDate);
+      });
+      
+      const filteredScheduleData = sortedScheduleData.filter((event) => {
+        const eventMonth = new Date(event.selectedDate).getMonth();
+        return eventMonth === selectedMonth;
+    });
+    
+      return ( 
+        <> 
+          <View style={{ width: 315, marginTop: 20, gap: 10 }}> 
+            <View style={{ width: '100%', borderWidth: 0.5 }} /> 
+            {filteredScheduleData.map((event, index) => ( 
+              <TouchableOpacity 
+                key={index} 
+                onPress={() => navigation.navigate('viewSched', { scheduleId: event.id })} 
+              > 
+                <View style={{ width: '100%', flexDirection: 'row' }}> 
+                  <View 
+                    style={{ 
+                      width: 80, 
+                      height: 60, 
+                      borderRadius: 20, 
+                      backgroundColor: getEventBackgroundColor(event), 
+                      justifyContent: 'center', 
+                      alignItems: 'center', 
+                    }} 
+                  > 
+                    <Text style={{ fontSize: 30, fontWeight: 800 }}> 
+                      {event.selectedDate.substring(8, 10)} 
+                    </Text> 
                   </View> 
-                </TouchableOpacity> 
-              </View> 
-            </View> 
-          </> 
-        ); 
-      } 
-      function getEventBackgroundColor(event) { 
-        const currentDate = new Date().toISOString().substring(0, 10); 
-        if (event.selectedDate === currentDate) { 
-          return 'rgba(255, 203, 60, 0.5)'; 
-        } else if (event.type === 'Collection') { 
-          return 'rgba(255, 203, 60, 0.5)'; 
-        } else if (event.type === 'Event') { 
-          return 'rgba(72, 229, 239, 0.5)'; 
-        } else if (event.type === 'Assignment') { 
-          return 'rgba(135, 255, 116, 0.5)'; 
-        } 
-    } 
-    function ViewSchedExtend(scheduleData) { 
-        const sortedScheduleData = [...scheduleData].sort((a, b) => { 
-          return new Date(a.selectedDate) - new Date(b.selectedDate); 
-        }); 
-        // Get the selected month from the selectedDate 
-        const selectedMonth = new Date(sortedScheduleData[0].selectedDate).getMonth(); 
-        // Filter the scheduleData to only include events from the selected month 
-        const filteredScheduleData = sortedScheduleData.filter((event) => { 
-          const eventMonth = new Date(event.selectedDate).getMonth(); 
-          return eventMonth === selectedMonth; 
-        }); 
-        return ( 
-          <> 
-            <View style={{ width: 315, marginTop: 20, gap: 10 }}> 
-              <View style={{ width: '100%', borderWidth: 0.5 }} /> 
-              {filteredScheduleData.map((event, index) => ( 
-                <View key={index} style={{ width: '100%', flexDirection: 'row' }}> 
-                  <View style={{ width: 80, height: 60, borderRadius: 20, backgroundColor: getEventBackgroundColor(event), justifyContent: 'center', alignItems: 'center' }}> 
-                    <Text style={{ fontSize: 30, fontWeight: 800 }}>{event.selectedDate.substring(8, 10)}</Text> 
-                  </View> 
-                  <View style={{ position: 'absolute', width: 225, height: 60, borderRadius: 10, backgroundColor: getEventBackgroundColor(event), right: 0, justifyContent: 'center', paddingHorizontal: 15 }}> 
+                  <View 
+                    style={{ 
+                      position: 'absolute', 
+                      width: 225, 
+                      height: 60, 
+                      borderRadius: 10, 
+                      backgroundColor: getEventBackgroundColor(event), 
+                      right: 0, 
+                      justifyContent: 'center', 
+                      paddingHorizontal: 15, 
+                    }} 
+                  > 
                     <Text style={{ fontSize: 18, fontWeight: 800 }}>{event.type}</Text> 
                     <Text>{event.startTime}</Text> 
-                    <TouchableOpacity activeOpacity={0.5} style={{ position: 'absolute', right: 10, top: 5 }} onPress={() => { navigation.navigate('changeSched') }}> 
-                      <Ionicons name='ellipsis-horizontal' style={{ fontSize: 20 }} /> 
-                    </TouchableOpacity> 
+                    <TouchableOpacity 
+                    activeOpacity={0.5} 
+                    style={{ position: 'absolute', right: 10, top: 5 }} 
+                    onPress={() => { 
+                      console.log('Schedule ID:', event.id); 
+                      navigation.navigate('changeSched'); 
+                    }} 
+                  > 
+                    <Ionicons name="ellipsis-horizontal" style={{ fontSize: 20, color: 'black' }} /> 
+                  </TouchableOpacity> 
                   </View> 
                 </View> 
-              ))} 
+              </TouchableOpacity> 
+            ))} 
+          </View> 
+          <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}> 
+            <View 
+              style={{ 
+                width: '95%', 
+                height: 40, 
+                backgroundColor: 'rgb(230, 230, 230)', 
+                overflow: 'hidden', 
+                borderRadius: 10, 
+                borderWidth: 0.5, 
+              }} 
+            > 
+              <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(false); }}> 
+                <View 
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    backgroundColor: 'rgb(247, 245, 243)', 
+                  }} 
+                > 
+                  <Text>Show less</Text> 
+                </View> 
+              </TouchableOpacity> 
             </View> 
-            <View style={{ width: 330, marginTop: 20, alignItems: 'center' }}> 
-              <View style={{ width: '95%', height: 40, backgroundColor: 'rgb(230, 230, 230)', overflow: 'hidden', borderRadius: 10, borderWidth: 0.5, marginBottom: 15 }}> 
-                <TouchableOpacity activeOpacity={0.5} onPress={() => { setViewSched(false); }}> 
-                  <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(247, 245, 243)' }}> 
-                    <Text>Show less</Text> 
-                  </View> 
-                </TouchableOpacity> 
-              </View> 
-            </View> 
-          </> 
-        ); 
-    }   
+          </View> 
+        </> 
+      ); 
+    } 
+    function getEventBackgroundColor(event) { 
+      const currentDate = new Date().toISOString().substring(0, 10); 
+      if (event.selectedDate === currentDate) { 
+        return 'rgba(255, 203, 60, 0.5)'; 
+      } else if (event.type === 'Collection') { 
+        return 'rgba(255, 203, 60, 0.5)'; 
+      } else if (event.type === 'Event') { 
+        return 'rgba(72, 229, 239, 0.5)'; 
+      } else if (event.type === 'Assignment') { 
+        return 'rgba(135, 255, 116, 0.5)'; 
+      } 
+    } 
     return ( 
       <>
       <TouchableOpacity style={{ position: 'absolute', left: 20, top: 30, zIndex: 99 }} onPress={() => {setOpenSideBar(SideNavigation(navigation))}}>
